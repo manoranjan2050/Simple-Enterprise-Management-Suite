@@ -1,0 +1,182 @@
+<?php
+/**
+ * Project: Resto Pro ERP - Hotel & Restaurant Management System
+ * Author: MANORANJAN
+ * Website: https://manoranjan.dev/
+ */
+
+session_start();
+include 'db.php';
+if (!isset($_SESSION['admin_user'])) { header("Location: login.php"); exit(); }
+
+$msg = "";
+$status = "";
+
+// 1. UPDATE SETTINGS LOGIC
+if (isset($_POST['update_settings'])) {
+    $name = $conn->real_escape_string($_POST['hotel_name']);
+    $addr = $conn->real_escape_string($_POST['hotel_address']);
+    $phone = $conn->real_escape_string($_POST['hotel_mobile']);
+    $lic = $conn->real_escape_string($_POST['license_no']);
+    $curr = $conn->real_escape_string($_POST['currency_symbol']);
+    $email = $conn->real_escape_string($_POST['hotel_email']);
+
+    $sql = "UPDATE global_settings SET 
+            hotel_name='$name', 
+            hotel_address='$addr', 
+            hotel_mobile='$phone', 
+            hotel_email='$email',
+            license_no='$lic', 
+            currency_symbol='$curr' 
+            WHERE id=1";
+    
+    if($conn->query($sql)) {
+        $msg = "Configuration saved successfully!";
+        $status = "success";
+    } else {
+        $msg = "Error: " . $conn->error;
+        $status = "error";
+    }
+}
+
+// 2. FETCH CURRENT SETTINGS
+$set = $conn->query("SELECT * FROM global_settings WHERE id=1")->fetch_assoc();
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings & Branding | Resto Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #f8fafc; }
+        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        .dev-badge { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); }
+    </style>
+</head>
+<body class="pb-10">
+
+<nav class="bg-slate-900 text-white p-6 shadow-xl flex justify-between items-center no-print">
+    <div class="flex items-center gap-4">
+        <div class="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center">
+            <i class="fas fa-cog animate-spin-slow"></i>
+        </div>
+        <div>
+            <h1 class="font-black uppercase text-sm tracking-widest">Control Panel</h1>
+            <p class="text-[9px] text-slate-400 font-bold tracking-[0.3em]">Resto Pro ERP v2.5</p>
+        </div>
+    </div>
+    <a href="index.php" class="text-[10px] bg-white/10 px-5 py-2 rounded-full font-black uppercase tracking-widest hover:bg-white/20 transition-all">
+        <i class="fas fa-arrow-left mr-2"></i> Dashboard
+    </a>
+</nav>
+
+<div class="container mx-auto px-4 mt-10">
+    <div class="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <div class="lg:col-span-8">
+            <div class="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden">
+                <div class="p-8 border-b border-slate-50 flex justify-between items-center">
+                    <h3 class="font-black text-slate-800 uppercase text-xs tracking-widest">Business Identity</h3>
+                    <i class="fas fa-building text-slate-200 text-2xl"></i>
+                </div>
+
+                <?php if($msg): ?>
+                    <div class="m-6 p-4 rounded-2xl text-[10px] font-black uppercase text-center border <?php echo $status == 'success' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-red-50 text-red-600 border-red-100'; ?>">
+                        <?php echo $msg; ?>
+                    </div>
+                <?php endif; ?>
+
+                <form method="POST" class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Restaurant / Hotel Name</label>
+                        <input type="text" name="hotel_name" value="<?php echo $set['hotel_name']; ?>" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold mt-1 focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Official Address</label>
+                        <textarea name="hotel_address" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl font-medium mt-1 h-24 outline-none"><?php echo $set['hotel_address']; ?></textarea>
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Contact Number</label>
+                        <input type="text" name="hotel_mobile" value="<?php echo $set['hotel_mobile']; ?>" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold mt-1">
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Email Address</label>
+                        <input type="email" name="hotel_email" value="<?php echo $set['hotel_email'] ?? ''; ?>" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold mt-1">
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">License / GST Number</label>
+                        <input type="text" name="license_no" value="<?php echo $set['license_no']; ?>" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold mt-1">
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Currency Symbol</label>
+                        <input type="text" name="currency_symbol" value="<?php echo $set['currency_symbol']; ?>" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold mt-1">
+                    </div>
+
+                    <div class="md:col-span-2 pt-4">
+                        <button type="submit" name="update_settings" class="w-full bg-indigo-600 text-white font-black py-5 rounded-3xl shadow-xl shadow-indigo-100 uppercase tracking-widest text-[11px] hover:bg-indigo-700 hover:-translate-y-1 transition-all active:scale-95">
+                            Update Configuration
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="lg:col-span-4 space-y-6">
+            <div class="dev-badge p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
+                <i class="fas fa-code absolute -bottom-4 -right-4 text-white/10 text-9xl"></i>
+                <h3 class="text-[10px] font-black uppercase tracking-[0.3em] mb-4 opacity-70">Project Architect</h3>
+                <div class="flex items-center gap-4 mb-4">
+                    <img src="https://github.com/manoranjan2050.png?size=96" alt="MANORANJAN" class="w-14 h-14 rounded-2xl border border-white/20 object-cover shadow-lg">
+                    <div>
+                        <h2 class="text-2xl font-black tracking-tighter">MANORANJAN</h2>
+                        <p class="text-[9px] font-black uppercase tracking-widest text-indigo-100/80">Developer</p>
+                    </div>
+                </div>
+                <p class="text-xs font-bold text-indigo-100 mb-6">Full Stack Developer & Open Source Contributor</p>
+                
+                <div class="space-y-4">
+                    <a href="https://manoranjan.dev/" target="_blank" class="flex items-center gap-3 bg-white/10 p-3 rounded-2xl hover:bg-white/20 transition-all border border-white/10">
+                        <i class="fas fa-globe text-sm"></i>
+                        <span class="text-[10px] font-black uppercase tracking-widest">manoranjan.dev</span>
+                    </a>
+                    <a href="https://github.com/manoranjan2050" target="_blank" class="flex items-center gap-3 bg-white/10 p-3 rounded-2xl hover:bg-white/20 transition-all border border-white/10">
+                        <i class="fab fa-github text-sm"></i>
+                        <span class="text-[10px] font-black uppercase tracking-widest">github.com/manoranjan2050</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+                <h3 class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">System Health</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-slate-600">PHP Version</span>
+                        <span class="text-[10px] font-black text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md"><?php echo phpversion(); ?></span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-slate-600">Database</span>
+                        <span class="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">MySQL Connected</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-20 mb-10 opacity-50 hover:opacity-100 transition-opacity">
+    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.5em]">
+        Open Source Initiative &bull; Developed by <a href="https://github.com/manoranjan2050" class="text-indigo-600 border-b-2 border-indigo-100">MANORANJAN</a> &bull; <a href="https://manoranjan.dev/" class="text-indigo-600 border-b-2 border-indigo-100">manoranjan.dev</a>
+    </p>
+</div>
+
+</body>
+</html>

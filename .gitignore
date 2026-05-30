@@ -1,0 +1,45 @@
+﻿# Local generated config
+config.php
+
+# Private database dumps and backups
+*.sql
+!setup.sql
+*.bak
+*.backup
+*.dump
+
+# Packaged exports
+*.zip
+*.tar
+*.tar.gz
+*.rar
+
+# Runtime uploads - keep folder, ignore user files
+uploads/*
+!uploads/index.html
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+error_log
+php_errorlog
+
+# Environment files
+.env
+.env.*
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Dependency/vendor folders if added later
+vendor/
+node_modules/
+
+# Test/cache folders
+.cache/
+coverage/

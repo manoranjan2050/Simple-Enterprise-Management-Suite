@@ -1,0 +1,27 @@
+Resto ERP Install Guide
+=======================
+
+Upload the full project folder to your PHP hosting account.
+
+Required:
+- PHP 8.0 or newer
+- MySQL or MariaDB
+- A database name, database username, and database password from your hosting panel
+
+Install:
+1. Open https://your-domain.com/install.php in the browser.
+2. Enter DB host, DB name, DB username, and DB password.
+3. Enter business branding details.
+4. Enter the first admin username, password, email, and mobile.
+5. Click Install Now.
+6. After success, open login.php and sign in with the admin account.
+
+Security after install:
+- Delete or rename install.php on the live server.
+- Keep config.php private. The included .htaccess blocks it on Apache hosting.
+- Do not share old backup SQL files if they contain private business data.
+
+Files used by installer:
+- install.php: browser setup wizard
+- setup.sql: clean blank database table structure
+- config.php: generated automatically after install
