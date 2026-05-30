@@ -162,7 +162,7 @@ if (isset($_GET['status']) && $_GET['status'] === 'done') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Install Resto ERP</title>
+    <title>Install Simple Enterprise Management Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -175,7 +175,7 @@ if (isset($_GET['status']) && $_GET['status'] === 'done') {
                         <i class="fas fa-utensils"></i>
                     </div>
                     <p class="mb-3 text-xs font-black uppercase tracking-[0.35em] text-indigo-300">Universal setup</p>
-                    <h1 class="text-4xl font-black uppercase tracking-tight text-white">Resto ERP Installer</h1>
+                    <h1 class="text-4xl font-black uppercase tracking-tight text-white">Simple EMS Installer</h1>
                     <p class="mt-4 text-sm leading-6 text-slate-400">Upload the folder to hosting, open install.php, enter database and branding details, and the system becomes ready for a new business.</p>
                 </div>
                 <div class="mt-10 grid gap-3 text-xs font-bold text-slate-300">
@@ -231,7 +231,7 @@ if (isset($_GET['status']) && $_GET['status'] === 'done') {
 
                         <div class="grid gap-4 md:grid-cols-2">
                             <label class="grid gap-2 text-xs font-black uppercase text-slate-500 md:col-span-2">Business / Brand Name
-                                <input name="brand_name" value="<?php echo old('brand_name', 'Resto ERP'); ?>" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-bold text-slate-900 outline-none focus:border-indigo-500" required>
+                                <input name="brand_name" value="<?php echo old('brand_name', 'My Business'); ?>" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-bold text-slate-900 outline-none focus:border-indigo-500" required>
                             </label>
                             <label class="grid gap-2 text-xs font-black uppercase text-slate-500 md:col-span-2">Address
                                 <textarea name="brand_address" class="min-h-20 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-bold text-slate-900 outline-none focus:border-indigo-500"><?php echo old('brand_address'); ?></textarea>

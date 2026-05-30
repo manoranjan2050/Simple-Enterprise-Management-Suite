@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: Resto Pro ERP - Hotel & Restaurant Management System
+ * Project: Simple Enterprise Management Suite
  * Author: MANORANJAN
  * Website: https://manoranjan.dev/
  */
@@ -48,7 +48,7 @@ $set = $conn->query("SELECT * FROM global_settings WHERE id=1")->fetch_assoc();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings & Branding | Resto Pro</title>
+    <title>Settings & Branding | Simple EMS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -66,7 +66,7 @@ $set = $conn->query("SELECT * FROM global_settings WHERE id=1")->fetch_assoc();
         </div>
         <div>
             <h1 class="font-black uppercase text-sm tracking-widest">Control Panel</h1>
-            <p class="text-[9px] text-slate-400 font-bold tracking-[0.3em]">Resto Pro ERP v2.5</p>
+            <p class="text-[9px] text-slate-400 font-bold tracking-[0.3em]">Simple Enterprise Management Suite v2.5</p>
         </div>
     </div>
     <a href="index.php" class="text-[10px] bg-white/10 px-5 py-2 rounded-full font-black uppercase tracking-widest hover:bg-white/20 transition-all">

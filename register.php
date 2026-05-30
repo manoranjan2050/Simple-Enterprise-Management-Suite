@@ -1,13 +1,13 @@
 <?php
 /**
- * Project: Resto Pro ERP
+ * Project: Simple Enterprise Management Suite
  * Feature: Disabled Registration Security Page
  */
 include 'db.php';
 
 // Fetch Branding
 $global_set = $conn->query("SELECT hotel_name FROM global_settings WHERE id=1")->fetch_assoc();
-$brand_name = $global_set['hotel_name'] ?? "RESTO PRO";
+$brand_name = $global_set['hotel_name'] ?? "SIMPLE EMS";
 ?>
 
 <!DOCTYPE html>
@@ -32,9 +32,9 @@ $brand_name = $global_set['hotel_name'] ?? "RESTO PRO";
         </div>
 
         <h1 class="text-2xl font-black italic tracking-tighter text-white uppercase mb-2">
-            Resto <span class="text-indigo-500">Pro</span>
+            Simple <span class="text-indigo-500">EMS</span>
         </h1>
-        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-8">Intelligence System</p>
+        <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-8">Management Suite</p>
 
         <div class="space-y-4 mb-10">
             <h2 class="text-xl font-bold text-white uppercase tracking-tight">Registration Disabled</h2>

@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: Resto Pro ERP - Intelligence Module
+ * Project: Simple Enterprise Management Suite
  * Feature: Advanced Financial Analytics & Reporting (Full Update)
  */
 session_start();
@@ -10,7 +10,7 @@ if (!isset($_SESSION['admin_user'])) { header("Location: login.php"); exit(); }
 
 // --- 1. GLOBAL SETTINGS ---
 $global_set = $conn->query("SELECT * FROM global_settings WHERE id=1")->fetch_assoc();
-$brand_name = $global_set['hotel_name'] ?? "RESTO PRO";
+$brand_name = $global_set['hotel_name'] ?? "SIMPLE EMS";
 $currency = $global_set['currency_symbol'] ?? "₹";
 
 // --- 2. SELECTION LOGIC ---

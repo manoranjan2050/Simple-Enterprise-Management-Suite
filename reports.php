@@ -21,7 +21,7 @@ $report_list = $conn->query("SELECT date, (cash_sales + online_sales) as rev, (g
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Financial Report | Resto Pro</title>
+    <title>Financial Report | Simple EMS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -53,7 +53,7 @@ $report_list = $conn->query("SELECT date, (cash_sales + online_sales) as rev, (g
         
         <div class="flex justify-between border-b-4 border-slate-900 pb-6 mb-8">
             <div>
-                <h1 class="text-3xl font-black tracking-tighter uppercase">HOTEL RESTO PRO</h1>
+                <h1 class="text-3xl font-black tracking-tighter uppercase">HOTEL SIMPLE EMS</h1>
                 <p class="text-slate-500 font-bold uppercase text-xs">Back Office Financial Statement</p>
             </div>
             <div class="text-right">

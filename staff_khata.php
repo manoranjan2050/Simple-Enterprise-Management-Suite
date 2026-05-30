@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: Resto Pro ERP
+ * Project: Simple Enterprise Management Suite
  * Author: MANORANJAN
  * Website: https://manoranjan.dev/
  */
@@ -10,7 +10,7 @@ if (!isset($_SESSION['admin_user'])) { header("Location: login.php"); exit(); }
 
 // Fetch Global Settings
 $global_set = $conn->query("SELECT * FROM global_settings WHERE id=1")->fetch_assoc();
-$brand_name = $global_set['hotel_name'] ?? "RESTO PRO";
+$brand_name = $global_set['hotel_name'] ?? "SIMPLE EMS";
 $currency = $global_set['currency_symbol'] ?? "₹";
 
 $msg = "";

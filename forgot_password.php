@@ -40,7 +40,7 @@ if (isset($_POST['reset_password'])) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Reset Password | Resto Pro</title>
+    <title>Reset Password | Simple EMS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>

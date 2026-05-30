@@ -8,7 +8,7 @@
                 <span class="mx-4 text-slate-200">|</span>
                 <a href="https://manoranjan.dev/" class="text-indigo-600 hover:text-indigo-800 transition-colors font-black underline">manoranjan.dev</a>
             </p>
-            <p class="text-[8px] text-slate-300 font-bold uppercase mt-2 tracking-widest italic">Resto Pro ERP v2.5.0 Premium Edition</p>
+            <p class="text-[8px] text-slate-300 font-bold uppercase mt-2 tracking-widest italic">Simple Enterprise Management Suite v1.0.0 Open Source Edition</p>
         </div>
     </div>
 </footer>

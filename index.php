@@ -5,7 +5,7 @@ include 'db.php';
 
 // --- 1. FETCH GLOBAL SETTINGS & BRANDING ---
 $global_set = $conn->query("SELECT * FROM global_settings WHERE id=1")->fetch_assoc();
-$brand_name = !empty($global_set['hotel_name']) ? $global_set['hotel_name'] : "RESTO PRO";
+$brand_name = !empty($global_set['hotel_name']) ? $global_set['hotel_name'] : "SIMPLE EMS";
 $currency = !empty($global_set['currency_symbol']) ? $global_set['currency_symbol'] : "₹";
 
 // --- 2. GLOBAL MONTH & YEAR FILTER ---

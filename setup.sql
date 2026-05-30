@@ -1,5 +1,5 @@
--- Resto ERP clean installer schema
--- Generated from RESTO_FULL_20260530_0722.sql on 2026-05-30
+-- Simple Enterprise Management Suite clean installer schema
+-- Clean schema for first-time installations
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `admin_users`;
@@ -44,13 +44,13 @@ CREATE TABLE `expense_details` (
 DROP TABLE IF EXISTS `global_settings`;
 CREATE TABLE `global_settings` (
   `id` int(11) NOT NULL,
-  `hotel_name` varchar(255) DEFAULT 'Resto Pro ERP',
+  `hotel_name` varchar(255) DEFAULT 'Simple Enterprise Management Suite',
   `hotel_address` text DEFAULT NULL,
   `hotel_mobile` varchar(20) DEFAULT NULL,
   `hotel_email` varchar(100) DEFAULT NULL,
   `license_no` varchar(100) DEFAULT NULL,
   `currency_symbol` varchar(10) DEFAULT 'Rs.',
-  `footer_text` varchar(255) DEFAULT 'Powered by Resto Pro',
+  `footer_text` varchar(255) DEFAULT 'Powered by Simple Enterprise Management Suite',
   `last_backup` datetime DEFAULT NULL,
   `last_restore` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),

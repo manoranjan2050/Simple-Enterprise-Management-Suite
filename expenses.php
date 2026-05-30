@@ -107,7 +107,7 @@ $expenses = $conn->query($main_query);
     <meta charset="UTF-8">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <title>Expense Manager | Resto Pro</title>
+    <title>Expense Manager | Simple EMS</title>
 </head>
 <body class="bg-slate-50 pb-20">
 

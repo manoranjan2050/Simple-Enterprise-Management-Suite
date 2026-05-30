@@ -1,5 +1,5 @@
-Resto ERP Install Guide
-=======================
+Simple Enterprise Management Suite Install Guide
+================================================
 
 Upload the full project folder to your PHP hosting account.
 

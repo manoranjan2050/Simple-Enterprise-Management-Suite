@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: Resto Pro ERP
+ * Project: Simple Enterprise Management Suite
  * Author: MANORANJAN
  * Website: https://manoranjan.dev/
  */
@@ -8,7 +8,7 @@ session_start();
 include 'db.php'; 
 
 $global_set = $conn->query("SELECT hotel_name FROM global_settings WHERE id=1")->fetch_assoc();
-$brand_name = !empty($global_set['hotel_name']) ? $global_set['hotel_name'] : 'Resto ERP';
+$brand_name = !empty($global_set['hotel_name']) ? $global_set['hotel_name'] : 'Simple EMS';
 
 // If already logged in, skip login page
 if (isset($_SESSION['admin_user'])) {

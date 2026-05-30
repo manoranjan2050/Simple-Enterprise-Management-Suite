@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: Resto Pro ERP - Intelligence Module
+ * Project: Simple Enterprise Management Suite
  * Feature: Data Shield v2.5 (Backup & Recovery with History)
  */
 session_start();
@@ -12,7 +12,7 @@ $status = "";
 
 // --- 1. FETCH METADATA (Backup & Restore History) ---
 $meta = $conn->query("SELECT hotel_name, last_backup, last_restore FROM global_settings WHERE id=1")->fetch_assoc();
-$brand_name = !empty($meta['hotel_name']) ? $meta['hotel_name'] : 'Resto ERP';
+$brand_name = !empty($meta['hotel_name']) ? $meta['hotel_name'] : 'Simple EMS';
 
 // Format dates for display
 $last_backup_display = (!empty($meta['last_backup'])) ? date('d M Y | h:i A', strtotime($meta['last_backup'])) : "NO HISTORY FOUND";
@@ -29,7 +29,7 @@ if (isset($_POST['run_backup'])) {
     $start_date = $_POST['start_date'] ?? '';
     $end_date = $_POST['end_date'] ?? '';
     
-    $sql_dump = "-- RESTO PRO ENTERPRISE BACKUP\n-- Mode: " . strtoupper($mode) . "\n-- Timestamp: " . date('Y-m-d H:i:s') . "\nSET FOREIGN_KEY_CHECKS = 0;\n\n";
+    $sql_dump = "-- SIMPLE EMS ENTERPRISE BACKUP\n-- Mode: " . strtoupper($mode) . "\n-- Timestamp: " . date('Y-m-d H:i:s') . "\nSET FOREIGN_KEY_CHECKS = 0;\n\n";
 
     foreach ($all_tables as $table) {
         $sql_dump .= "DROP TABLE IF EXISTS `$table`;\n";
@@ -62,7 +62,7 @@ if (isset($_POST['run_backup'])) {
     $conn->query("UPDATE global_settings SET last_backup = '$now' WHERE id=1");
 
     header('Content-Type: application/octet-stream');
-    header("Content-disposition: attachment; filename=\"RESTO_".strtoupper($mode)."_" . date('Ymd_Hi') . ".sql\"");
+    header("Content-disposition: attachment; filename=\"SEMS_".strtoupper($mode)."_" . date('Ymd_Hi') . ".sql\"");
     echo $sql_dump; exit;
 }
 

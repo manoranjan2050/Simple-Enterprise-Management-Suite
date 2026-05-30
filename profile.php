@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: Resto Pro ERP
+ * Project: Simple Enterprise Management Suite
  * Author: MANORANJAN
  * Feature: Profile & Security Management
  */
@@ -208,7 +208,7 @@ if (isset($_POST['update_profile'])) {
 
     <div class="text-center mt-10 opacity-40 hover:opacity-100 transition-opacity">
         <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">
-            System Control Panel &bull; Resto Pro v2.5
+            System Control Panel &bull; Simple EMS v1.0
         </p>
     </div>
 
