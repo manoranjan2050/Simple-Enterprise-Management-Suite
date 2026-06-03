@@ -38,6 +38,7 @@ It includes a first-time installer, so anyone can upload the files to hosting, o
 - Master ledger view
 - Reports and analytics
 - SQL backup and restore manager
+- Telegram bot integration for quick reports and daily entries
 - Responsive Tailwind CSS interface
 - GitHub-ready `.gitignore` for safe open-source publishing
 
@@ -56,6 +57,7 @@ It includes a first-time installer, so anyone can upload the files to hosting, o
 | Analytics | Visual business intelligence screens |
 | Data Shield | SQL backup and restore tools |
 | Settings | Branding and business identity controls |
+| Telegram Bot | Quick summaries, collection entry, expense entry, and vendor checks |
 
 ## Quick Install
 
@@ -78,6 +80,16 @@ https://your-domain.com/login.php
 
 After installation on a live server, delete or rename `install.php`.
 
+## Updating Existing Installations
+
+If you already installed an older version, upload the new files, login as admin, then open:
+
+```text
+https://your-domain.com/update.php
+```
+
+Click `Run Update` once. This adds Telegram integration columns and the Telegram log table without deleting your existing data.
+
 ## Requirements
 
 - PHP 8.0 or newer
@@ -96,6 +108,8 @@ After installation on a live server, delete or rename `install.php`.
 | `config.php` | Generated after install and ignored by Git |
 | `.htaccess` | Apache protection for private files |
 | `INSTALL_README.txt` | Short hosting install guide |
+| `update.php` | Safe migration tool for old installations |
+| `telegram.php` | Telegram webhook endpoint |
 
 ## Security Notes
 
@@ -105,6 +119,44 @@ After installation on a live server, delete or rename `install.php`.
 - Use a strong admin password.
 - Keep PHP, MySQL, and hosting tools updated.
 - The included `.htaccess` blocks direct access to SQL/config files on Apache hosting.
+
+## Telegram Integration
+
+Telegram is useful for fast daily entry and quick summaries. The web app remains the main management panel.
+
+Recommended first commands:
+
+```text
+/menu
+/today
+/month
+/add_collection cash 1000 online 500 note Today sale
+/add_expense category Grocery amount 300 status Paid note Rice
+/vendors
+/vendor_due
+/add_vendor_payment vendor Grocery amount 500
+```
+
+Setup steps:
+
+1. Create a bot using Telegram `@BotFather`.
+2. Copy the bot token.
+3. In Simple EMS, open `Settings`.
+4. Enable Telegram Bot and paste the bot token.
+5. Send any message to your bot. It will reply with your blocked chat ID.
+6. Copy that chat ID into `Allowed Chat IDs` in Settings and save.
+7. Set the webhook URL:
+
+```text
+https://api.telegram.org/botYOUR_BOT_TOKEN/setWebhook?url=https://your-domain.com/telegram.php
+```
+
+Security rules:
+
+- Only chat IDs listed in Settings can run commands.
+- Never commit or share your bot token.
+- Keep `telegram_logs` for audit history.
+- Use Telegram for fast entries; use the web app for review and correction.
 
 ## Git Setup
 

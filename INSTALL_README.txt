@@ -25,3 +25,12 @@ Files used by installer:
 - install.php: browser setup wizard
 - setup.sql: clean blank database table structure
 - config.php: generated automatically after install
+- update.php: run once after uploading a new version to an old installed system
+- telegram.php: Telegram bot webhook endpoint
+
+Telegram:
+1. Create a bot using @BotFather.
+2. Paste the bot token in Settings.
+3. Send a message to the bot to get your chat ID.
+4. Add that chat ID in Settings > Allowed Chat IDs.
+5. Set webhook to https://your-domain.com/telegram.php.

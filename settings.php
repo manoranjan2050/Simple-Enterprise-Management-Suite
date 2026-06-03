@@ -12,6 +12,12 @@ if (!isset($_SESSION['admin_user'])) { header("Location: login.php"); exit(); }
 $msg = "";
 $status = "";
 
+function sems_settings_column_exists(mysqli $conn, $column) {
+    $column = $conn->real_escape_string($column);
+    $result = $conn->query("SHOW COLUMNS FROM global_settings LIKE '$column'");
+    return $result && $result->num_rows > 0;
+}
+
 // 1. UPDATE SETTINGS LOGIC
 if (isset($_POST['update_settings'])) {
     $name = $conn->real_escape_string($_POST['hotel_name']);
@@ -20,6 +26,17 @@ if (isset($_POST['update_settings'])) {
     $lic = $conn->real_escape_string($_POST['license_no']);
     $curr = $conn->real_escape_string($_POST['currency_symbol']);
     $email = $conn->real_escape_string($_POST['hotel_email']);
+    $telegram_enabled = isset($_POST['telegram_enabled']) ? 1 : 0;
+    $telegram_bot_token = $conn->real_escape_string(trim($_POST['telegram_bot_token'] ?? ''));
+    $telegram_allowed_chat_ids = $conn->real_escape_string(trim($_POST['telegram_allowed_chat_ids'] ?? ''));
+
+    $telegram_sql = "";
+    if (sems_settings_column_exists($conn, 'telegram_enabled')) {
+        $telegram_sql = ",
+            telegram_enabled='$telegram_enabled',
+            telegram_bot_token='$telegram_bot_token',
+            telegram_allowed_chat_ids='$telegram_allowed_chat_ids'";
+    }
 
     $sql = "UPDATE global_settings SET 
             hotel_name='$name', 
@@ -27,7 +44,8 @@ if (isset($_POST['update_settings'])) {
             hotel_mobile='$phone', 
             hotel_email='$email',
             license_no='$lic', 
-            currency_symbol='$curr' 
+            currency_symbol='$curr'
+            $telegram_sql
             WHERE id=1";
     
     if($conn->query($sql)) {
@@ -41,6 +59,7 @@ if (isset($_POST['update_settings'])) {
 
 // 2. FETCH CURRENT SETTINGS
 $set = $conn->query("SELECT * FROM global_settings WHERE id=1")->fetch_assoc();
+$telegram_ready = sems_settings_column_exists($conn, 'telegram_enabled');
 ?>
 
 <!DOCTYPE html>
@@ -92,7 +111,7 @@ $set = $conn->query("SELECT * FROM global_settings WHERE id=1")->fetch_assoc();
 
                 <form method="POST" class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="md:col-span-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Restaurant / Hotel Name</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Business / Organization Name</label>
                         <input type="text" name="hotel_name" value="<?php echo $set['hotel_name']; ?>" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold mt-1 focus:ring-2 focus:ring-indigo-500 outline-none">
                     </div>
 
@@ -125,6 +144,45 @@ $set = $conn->query("SELECT * FROM global_settings WHERE id=1")->fetch_assoc();
                         <button type="submit" name="update_settings" class="w-full bg-indigo-600 text-white font-black py-5 rounded-3xl shadow-xl shadow-indigo-100 uppercase tracking-widest text-[11px] hover:bg-indigo-700 hover:-translate-y-1 transition-all active:scale-95">
                             Update Configuration
                         </button>
+                    </div>
+
+                    <div class="md:col-span-2 border-t border-slate-100 pt-8 mt-2">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h3 class="font-black text-slate-800 uppercase text-xs tracking-widest">Telegram Integration</h3>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Fast reports and daily entry by bot</p>
+                            </div>
+                            <i class="fab fa-telegram-plane text-sky-500 text-3xl"></i>
+                        </div>
+
+                        <?php if(!$telegram_ready): ?>
+                            <div class="bg-amber-50 border border-amber-100 text-amber-700 p-4 rounded-2xl text-[10px] font-black uppercase mb-6">
+                                Run update.php once to enable Telegram fields for this old installation.
+                            </div>
+                        <?php endif; ?>
+
+                        <label class="flex items-center gap-3 bg-slate-50 border border-slate-100 rounded-2xl p-4 mb-5">
+                            <input type="checkbox" name="telegram_enabled" value="1" class="w-5 h-5 accent-indigo-600" <?php echo !empty($set['telegram_enabled']) ? 'checked' : ''; ?> <?php echo !$telegram_ready ? 'disabled' : ''; ?>>
+                            <span class="text-xs font-black uppercase tracking-widest text-slate-600">Enable Telegram Bot</span>
+                        </label>
+
+                        <div class="grid grid-cols-1 gap-5">
+                            <div>
+                                <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Bot Token</label>
+                                <input type="password" name="telegram_bot_token" value="<?php echo htmlspecialchars($set['telegram_bot_token'] ?? ''); ?>" placeholder="123456:ABC..." class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl font-bold mt-1" <?php echo !$telegram_ready ? 'disabled' : ''; ?>>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Allowed Chat IDs</label>
+                                <textarea name="telegram_allowed_chat_ids" placeholder="Example: 123456789, 987654321" class="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl font-medium mt-1 h-24 outline-none" <?php echo !$telegram_ready ? 'disabled' : ''; ?>><?php echo htmlspecialchars($set['telegram_allowed_chat_ids'] ?? ''); ?></textarea>
+                                <p class="text-[9px] text-slate-400 font-bold mt-2 ml-2 uppercase">Send any message to the bot first; blocked reply will show your chat ID.</p>
+                            </div>
+                            <div class="bg-sky-50 border border-sky-100 rounded-2xl p-4 text-[10px] font-bold text-sky-700 leading-5">
+                                Webhook URL: <span class="font-black"><?php echo htmlspecialchars((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'your-domain.com') . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\') . '/telegram.php'); ?></span>
+                            </div>
+                            <button type="submit" name="update_settings" class="w-full bg-sky-600 text-white font-black py-5 rounded-3xl shadow-xl shadow-sky-100 uppercase tracking-widest text-[11px] hover:bg-slate-900 hover:-translate-y-1 transition-all active:scale-95">
+                                Save Telegram Settings
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>

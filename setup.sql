@@ -53,6 +53,9 @@ CREATE TABLE `global_settings` (
   `footer_text` varchar(255) DEFAULT 'Powered by Simple Enterprise Management Suite',
   `last_backup` datetime DEFAULT NULL,
   `last_restore` datetime DEFAULT NULL,
+  `telegram_enabled` tinyint(1) NOT NULL DEFAULT 0,
+  `telegram_bot_token` varchar(255) DEFAULT NULL,
+  `telegram_allowed_chat_ids` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `global_settings_chk_1` CHECK (`id` = 1)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -114,6 +117,21 @@ CREATE TABLE `users` (
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `telegram_logs`;
+CREATE TABLE `telegram_logs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `chat_id` varchar(64) NOT NULL,
+  `username` varchar(100) DEFAULT NULL,
+  `command` varchar(80) DEFAULT NULL,
+  `message` text DEFAULT NULL,
+  `response` text DEFAULT NULL,
+  `status` enum('Success','Error','Blocked') DEFAULT 'Success',
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `chat_id` (`chat_id`),
+  KEY `created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 SET FOREIGN_KEY_CHECKS = 1;
