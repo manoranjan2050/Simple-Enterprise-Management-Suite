@@ -38,8 +38,10 @@ It includes a first-time installer, so anyone can upload the files to hosting, o
 - Master ledger view
 - Reports and analytics
 - SQL backup and restore manager
+- Remote Cloud Sync — one-click backup to your own server over HTTPS
+- Installable as a mobile app (PWA) — add it to your phone's home screen
+- Animated, mobile-friendly Tailwind CSS + Alpine.js interface
 - Telegram bot integration for quick reports and daily entries
-- Responsive Tailwind CSS interface
 - GitHub-ready `.gitignore` for safe open-source publishing
 
 ## Modules
@@ -55,9 +57,14 @@ It includes a first-time installer, so anyone can upload the files to hosting, o
 | Master Ledger | Combined business ledger view |
 | Reports | Filtered and printable business reports |
 | Analytics | Visual business intelligence screens |
-| Data Shield | SQL backup and restore tools |
-| Settings | Branding and business identity controls |
+| Data Shield | SQL backup, restore, and Remote Cloud Sync tools |
+| Settings | Branding, business identity, Telegram, and Remote Cloud Sync controls |
 | Telegram Bot | Quick summaries, collection entry, expense entry, and vendor checks |
+
+## Fresh Install vs. Updating
+
+- **Never installed SEMS before?** Use `install.php` (see [Quick Install](#quick-install) below). It builds a clean database from `setup.sql` and creates your first admin account.
+- **Already have SEMS running and just pulled newer code?** Do **not** run `install.php` again — it's for first-time setup only. Instead run `update.php` (see [Updating Existing Installations](#updating-existing-installations)) to safely add new columns/tables to your existing database without touching your existing data.
 
 ## Quick Install
 
@@ -80,6 +87,8 @@ https://your-domain.com/login.php
 
 After installation on a live server, delete or rename `install.php`.
 
+On a phone, open `login.php` in the browser and use "Add to Home Screen" to install SEMS as an app.
+
 ## Updating Existing Installations
 
 If you already installed an older version, upload the new files, login as admin, then open:
@@ -88,7 +97,11 @@ If you already installed an older version, upload the new files, login as admin,
 https://your-domain.com/update.php
 ```
 
-Click `Run Update` once. This adds Telegram integration columns and the Telegram log table without deleting your existing data.
+Click `Run Update` once. This is safe to re-run any time — it only adds
+columns/tables that don't already exist, it never deletes data. It currently adds:
+
+- Telegram integration columns and the Telegram log table
+- Remote Cloud Sync columns (`remote_sync_enabled`, `remote_sync_url`, `remote_sync_api_key`, `remote_sync_last_status`, `last_remote_backup`) on `global_settings`
 
 ## Requirements
 
@@ -110,6 +123,19 @@ Click `Run Update` once. This adds Telegram integration columns and the Telegram
 | `INSTALL_README.txt` | Short hosting install guide |
 | `update.php` | Safe migration tool for old installations |
 | `telegram.php` | Telegram webhook endpoint |
+| `db_manager.php` | Data Shield: local backup/restore + Remote Cloud Sync |
+| `manifest.json`, `service-worker.js`, `pwa-register.js` | PWA / "install to phone" support |
+| `examples/sems_sync_receiver.php` | Reference receiver to deploy on your own remote backup server |
+
+## Remote Cloud Sync
+
+Data Shield's Cloud Sync card can push a full database backup to a server you control, over HTTPS, on demand.
+
+1. Deploy `examples/sems_sync_receiver.php` to a separate PHP host (not this same app/server) and set a strong `RECEIVER_API_KEY` in it.
+2. In SEMS, open `Settings` and fill in the Remote Cloud Sync panel: enable it, set the Remote Sync URL to your deployed receiver, and set the API Key to match.
+3. From `Data Shield` (Cloud Sync tile on the dashboard), click `Sync Now`.
+
+The backup is sent as plain SQL over your connection, so use an HTTPS URL. There's no automatic scheduling in this release — trigger a sync manually whenever you want a fresh remote copy.
 
 ## Security Notes
 
