@@ -15,7 +15,13 @@
   <img alt="PHP" src="https://img.shields.io/badge/PHP-8%2B-777BB4?style=for-the-badge&logo=php&logoColor=white">
   <img alt="MySQL" src="https://img.shields.io/badge/MySQL-MariaDB-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
   <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind-CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white">
+  <img alt="Alpine.js" src="https://img.shields.io/badge/Alpine.js-Animated%20UI-8BC0D0?style=for-the-badge&logo=alpinedotjs&logoColor=white">
+  <img alt="PWA" src="https://img.shields.io/badge/PWA-Installable-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white">
   <img alt="Open Source" src="https://img.shields.io/badge/Open%20Source-Ready-22C55E?style=for-the-badge&logo=opensourceinitiative&logoColor=white">
+</p>
+
+<p align="center">
+  <img src="docs/dashboard-preview.svg" alt="Simple Enterprise Management Suite dashboard preview" width="820">
 </p>
 
 ---

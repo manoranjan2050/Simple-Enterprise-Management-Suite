@@ -1,0 +1,165 @@
+<svg viewBox="0 0 1200 760" xmlns="http://www.w3.org/2000/svg" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eef2ff"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+    <linearGradient id="revCard" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#dcfce7"/>
+    </linearGradient>
+    <linearGradient id="expCard" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#fee2e2"/>
+    </linearGradient>
+    <linearGradient id="profitCard" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#0f172a" flood-opacity="0.12"/>
+    </filter>
+    <filter id="cardShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#0f172a" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="760" fill="url(#bgGrad)"/>
+
+  <!-- Browser window -->
+  <g filter="url(#softShadow)">
+    <rect x="40" y="30" width="1120" height="700" rx="20" fill="#ffffff"/>
+  </g>
+
+  <!-- Browser chrome bar -->
+  <rect x="40" y="30" width="1120" height="40" rx="20" fill="#e2e8f0"/>
+  <rect x="40" y="50" width="1120" height="20" fill="#e2e8f0"/>
+  <circle cx="66" cy="50" r="6" fill="#f87171"/>
+  <circle cx="88" cy="50" r="6" fill="#fbbf24"/>
+  <circle cx="110" cy="50" r="6" fill="#34d399"/>
+  <rect x="500" y="40" width="240" height="20" rx="10" fill="#ffffff"/>
+  <text x="620" y="54" font-size="11" fill="#64748b" text-anchor="middle" font-weight="bold">mybusiness.app/dashboard</text>
+
+  <!-- App nav bar -->
+  <rect x="40" y="70" width="1120" height="56" fill="#0f172a"/>
+  <text x="76" y="105" font-size="22" font-style="italic" font-weight="900" fill="#818cf8" letter-spacing="1">MY BUSINESS</text>
+  <circle cx="1040" cy="98" r="15" fill="#1e293b"/>
+  <path d="M1034 98a6 6 0 1 0 12 0a6 6 0 1 0 -12 0" stroke="#cbd5e1" stroke-width="1.6" fill="none"/>
+  <circle cx="1086" cy="98" r="16" fill="#6366f1"/>
+  <text x="1086" y="103" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="bold">AD</text>
+  <rect x="1112" y="86" width="66" height="24" rx="8" fill="#ef444422" stroke="#ef444455"/>
+  <text x="1145" y="102" font-size="10" fill="#f87171" text-anchor="middle" font-weight="bold">LOGOUT</text>
+
+  <!-- Filter bar -->
+  <rect x="76" y="146" width="1048" height="64" rx="20" fill="#ffffff" stroke="#e2e8f0" filter="url(#cardShadow)"/>
+  <text x="100" y="172" font-size="9" fill="#94a3b8" font-weight="bold" letter-spacing="1">DASHBOARD DATA FILTER</text>
+  <text x="100" y="190" font-size="12" fill="#475569" font-weight="bold">Showing stats for: <tspan fill="#4f46e5">JULY 2026</tspan></text>
+  <rect x="860" y="162" width="90" height="32" rx="10" fill="#f1f5f9"/>
+  <text x="905" y="182" font-size="10" fill="#475569" text-anchor="middle" font-weight="bold">JULY</text>
+  <rect x="960" y="162" width="70" height="32" rx="10" fill="#f1f5f9"/>
+  <text x="995" y="182" font-size="10" fill="#475569" text-anchor="middle" font-weight="bold">2026</text>
+  <rect x="1040" y="162" width="84" height="32" rx="10" fill="#4f46e5"/>
+  <text x="1082" y="182" font-size="10" fill="#ffffff" text-anchor="middle" font-weight="bold">APPLY</text>
+
+  <!-- Tile row -->
+  <g font-size="9" font-weight="bold" fill="#334155">
+    <!-- tile template repeated -->
+    <g transform="translate(76,226)">
+      <rect width="108" height="72" rx="18" fill="#ffffff" stroke="#e2e8f0" filter="url(#cardShadow)"/>
+      <circle cx="26" cy="24" r="9" fill="#22c55e"/>
+      <text x="16" y="56" font-size="8">CASH</text>
+      <text x="16" y="66" font-size="8">COLLECTION</text>
+    </g>
+    <g transform="translate(196,226)">
+      <rect width="108" height="72" rx="18" fill="#ffffff" stroke="#e2e8f0" filter="url(#cardShadow)"/>
+      <circle cx="26" cy="24" r="9" fill="#6366f1"/>
+      <text x="16" y="56" font-size="8">REVENUE</text>
+      <text x="16" y="66" font-size="8">LOG</text>
+    </g>
+    <g transform="translate(316,226)">
+      <rect width="108" height="72" rx="18" fill="#ffffff" stroke="#e2e8f0" filter="url(#cardShadow)"/>
+      <circle cx="26" cy="24" r="9" fill="#ef4444"/>
+      <text x="16" y="56" font-size="8">EXPENSES</text>
+    </g>
+    <g transform="translate(436,226)">
+      <rect width="108" height="72" rx="18" fill="#ffffff" stroke="#e2e8f0" filter="url(#cardShadow)"/>
+      <circle cx="26" cy="24" r="9" fill="#ea580c"/>
+      <text x="16" y="56" font-size="8">VENDORS</text>
+    </g>
+    <g transform="translate(556,226)">
+      <rect width="108" height="72" rx="18" fill="#ffffff" stroke="#e2e8f0" filter="url(#cardShadow)"/>
+      <circle cx="26" cy="24" r="9" fill="#6366f1"/>
+      <text x="16" y="56" font-size="8">STAFF HUB</text>
+    </g>
+    <g transform="translate(676,226)">
+      <rect width="108" height="72" rx="18" fill="#ffffff" stroke="#e2e8f0" filter="url(#cardShadow)"/>
+      <circle cx="26" cy="24" r="9" fill="#94a3b8"/>
+      <circle cx="32" cy="30" r="4" fill="#10b981"/>
+      <text x="16" y="56" font-size="8">REPORTS</text>
+    </g>
+    <g transform="translate(796,226)">
+      <rect width="108" height="72" rx="18" fill="#eef2ff" stroke="#c7d2fe" filter="url(#cardShadow)"/>
+      <rect x="16" y="14" width="20" height="20" rx="6" fill="#4f46e5"/>
+      <text x="16" y="56" font-size="8" fill="#3730a3">ANALYTICS</text>
+    </g>
+    <g transform="translate(916,226)">
+      <rect width="108" height="72" rx="18" fill="#ffffff" stroke="#e2e8f0" filter="url(#cardShadow)"/>
+      <circle cx="26" cy="24" r="9" fill="#10b981"/>
+      <text x="16" y="56" font-size="8">CLOUD SYNC</text>
+    </g>
+    <g transform="translate(1036,226)">
+      <rect width="88" height="72" rx="18" fill="#fffbeb" stroke="#fde68a" filter="url(#cardShadow)"/>
+      <rect x="14" y="14" width="20" height="20" rx="6" fill="#f59e0b"/>
+      <text x="14" y="56" font-size="8" fill="#92400e">MASTER</text>
+      <text x="14" y="66" font-size="8" fill="#92400e">LEDGER</text>
+    </g>
+  </g>
+
+  <!-- KPI cards -->
+  <g filter="url(#cardShadow)">
+    <rect x="76" y="326" width="336" height="130" rx="26" fill="url(#revCard)" stroke="#ffffff"/>
+    <rect x="424" y="326" width="336" height="130" rx="26" fill="url(#expCard)" stroke="#ffffff"/>
+    <rect x="772" y="326" width="352" height="130" rx="26" fill="url(#profitCard)"/>
+  </g>
+  <text x="100" y="360" font-size="9" fill="#94a3b8" font-weight="bold" letter-spacing="1">TOTAL REVENUE</text>
+  <text x="100" y="398" font-size="26" fill="#0f172a" font-weight="900">Rs.42,500.00</text>
+  <rect x="100" y="412" width="70" height="20" rx="8" fill="#bbf7d0"/>
+  <text x="135" y="426" font-size="8" fill="#15803d" text-anchor="middle" font-weight="bold">CASH: 28K</text>
+  <rect x="176" y="412" width="66" height="20" rx="8" fill="#bfdbfe"/>
+  <text x="209" y="426" font-size="8" fill="#1d4ed8" text-anchor="middle" font-weight="bold">UPI: 14.5K</text>
+
+  <text x="448" y="360" font-size="9" fill="#94a3b8" font-weight="bold" letter-spacing="1">TOTAL EXPENSES</text>
+  <text x="448" y="398" font-size="26" fill="#0f172a" font-weight="900">Rs.18,120.00</text>
+  <text x="448" y="424" font-size="9" fill="#94a3b8" font-weight="bold" font-style="italic">Bills, Inventory &amp; Staff</text>
+
+  <text x="796" y="360" font-size="9" fill="#a5b4fc" font-weight="bold" letter-spacing="1">NET BUSINESS PROFIT</text>
+  <text x="796" y="398" font-size="26" fill="#ffffff" font-weight="900">Rs.24,380.00</text>
+  <rect x="796" y="418" width="304" height="8" rx="4" fill="#334155"/>
+  <rect x="796" y="418" width="200" height="8" rx="4" fill="#6366f1"/>
+
+  <!-- Chart card -->
+  <g filter="url(#cardShadow)">
+    <rect x="76" y="486" width="1048" height="200" rx="26" fill="#ffffff" stroke="#f1f5f9"/>
+  </g>
+  <text x="104" y="518" font-size="16" fill="#1e293b" font-weight="900" letter-spacing="-0.5">PERFORMANCE TREND</text>
+  <text x="104" y="534" font-size="9" fill="#94a3b8" font-weight="bold" letter-spacing="1">GROWTH ANALYTICS VISUALIZATION</text>
+  <rect x="960" y="504" width="140" height="28" rx="12" fill="#f1f5f9"/>
+  <rect x="964" y="508" width="44" height="20" rx="8" fill="#ffffff"/>
+  <text x="986" y="522" font-size="8" fill="#4f46e5" text-anchor="middle" font-weight="bold">15D</text>
+  <text x="1034" y="522" font-size="8" fill="#94a3b8" text-anchor="middle" font-weight="bold">30D</text>
+  <text x="1082" y="522" font-size="8" fill="#94a3b8" text-anchor="middle" font-weight="bold">YEAR</text>
+
+  <polyline points="104,650 180,610 256,630 332,580 408,600 484,560 560,590 636,540 712,570 788,520 864,545 940,500 1016,520 1092,480"
+            fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="104,660 180,655 256,640 332,650 408,630 484,645 560,620 636,635 712,610 788,625 864,600 940,615 1016,590 1092,605"
+            fill="none" stroke="#f87171" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="104" y1="670" x2="1092" y2="670" stroke="#f1f5f9" stroke-width="1"/>
+
+  <!-- Corner "app installed" badge -->
+  <g transform="translate(966,6)">
+    <rect x="0" y="0" width="188" height="40" rx="20" fill="#4f46e5" filter="url(#softShadow)"/>
+    <circle cx="22" cy="20" r="9" fill="#ffffff"/>
+    <path d="M18 20l3 3l6 -7" stroke="#4f46e5" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="40" y="24" font-size="11" fill="#ffffff" font-weight="bold">Installable PWA</text>
+  </g>
+</svg>
