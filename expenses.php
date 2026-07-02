@@ -105,18 +105,36 @@ $expenses = $conn->query($main_query);
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="pwa-register.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <title>Expense Manager | Simple EMS</title>
+    <style>[x-cloak] { display: none !important; }</style>
 </head>
 <body class="bg-slate-50 pb-20">
 
-<nav class="bg-red-600 text-white p-4 shadow-lg flex justify-between items-center no-print">
-    <h1 class="font-bold uppercase tracking-tighter text-sm md:text-base"><i class="fas fa-file-invoice-dollar mr-2"></i> Expense Management</h1>
-    <a href="index.php" class="text-[10px] bg-red-900 px-4 py-2 rounded-lg font-bold uppercase tracking-widest">Dashboard</a>
+<nav class="bg-red-600 text-white p-3 sm:p-4 shadow-lg no-print" x-data="{ mobileOpen: false }">
+    <div class="flex justify-between items-center">
+        <h1 class="font-bold uppercase tracking-tighter text-sm md:text-base"><i class="fas fa-file-invoice-dollar mr-2"></i> Expense Management</h1>
+        <div class="hidden sm:flex items-center">
+            <a href="index.php" class="text-[10px] bg-red-900 px-4 py-2 rounded-lg font-bold uppercase tracking-widest">Dashboard</a>
+        </div>
+        <button @click="mobileOpen = !mobileOpen" class="sm:hidden p-2 bg-red-900 rounded-xl">
+            <i class="fas" :class="mobileOpen ? 'fa-xmark' : 'fa-bars'"></i>
+        </button>
+    </div>
+    <div x-show="mobileOpen" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="sm:hidden mt-4 pb-2 flex flex-col gap-2 border-t border-red-500 pt-4">
+        <a href="index.php" class="p-3 bg-red-900 rounded-xl text-[10px] font-black uppercase text-center"><i class="fas fa-arrow-left mr-2"></i>Dashboard</a>
+    </div>
 </nav>
 
-<div class="container mx-auto px-4 mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+<div class="container mx-auto px-4 mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6" x-data="{ show: false }" x-init="setTimeout(() => show = true, 50)" x-show="show" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
     
     <div class="lg:col-span-4 space-y-6 no-print">
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
@@ -129,7 +147,7 @@ $expenses = $conn->query($main_query);
 
         <div class="bg-white p-6 rounded-2xl shadow-xl border-t-4 border-red-500">
             <h3 class="font-black mb-4 text-slate-800 uppercase text-xs"><?php echo $edit_data ? 'Update Entry' : 'New Expense Entry'; ?></h3>
-            <form method="POST" class="space-y-4">
+            <form method="POST" class="space-y-4" x-data="{ loading: false }" @submit="loading = true">
                 <input type="hidden" name="exp_id" value="<?php echo $edit_data['id'] ?? ''; ?>">
                 <input type="date" name="date" value="<?php echo $edit_data['date'] ?? date('Y-m-d'); ?>" class="w-full p-3 border rounded-xl bg-slate-50 text-sm font-bold">
                 
@@ -148,7 +166,10 @@ $expenses = $conn->query($main_query);
                 <input type="number" step="0.01" name="amount" placeholder="Amount ₹" value="<?php echo $edit_data['amount'] ?? ''; ?>" class="w-full p-3 border rounded-xl font-black text-2xl text-red-600 focus:ring-2 focus:ring-red-200 outline-none" required>
                 <textarea name="note" placeholder="Note: e.g. 50 Ltrs Milk" class="w-full p-3 border rounded-xl h-24 text-sm outline-none focus:ring-2 focus:ring-red-200"><?php echo $edit_data['note'] ?? ''; ?></textarea>
                 
-                <button type="submit" name="save_expense" class="w-full bg-red-600 text-white font-black py-4 rounded-2xl shadow-lg uppercase tracking-widest text-xs hover:bg-red-700 transition-all">Save to Ledger</button>
+                <button type="submit" name="save_expense" :disabled="loading" class="w-full bg-red-600 text-white font-black py-4 rounded-2xl shadow-lg uppercase tracking-widest text-xs hover:bg-red-700 transition-all disabled:opacity-60">
+                    <span x-show="!loading">Save to Ledger</span>
+                    <i x-show="loading" x-cloak class="fas fa-circle-notch fa-spin"></i>
+                </button>
                 <?php if($edit_data): ?>
                     <a href="expenses.php" class="block text-center text-[10px] font-black text-slate-400 mt-2 uppercase underline">Discard Changes</a>
                 <?php endif; ?>

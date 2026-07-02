@@ -32,18 +32,36 @@ $vendors = $conn->query("SELECT
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="pwa-register.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <title>Vendor Khata | Credit Tracker</title>
+    <style>[x-cloak] { display: none !important; }</style>
 </head>
 <body class="bg-slate-100 pb-10">
 
-<nav class="bg-slate-900 text-white p-4 shadow-lg flex justify-between items-center">
-    <h1 class="font-bold uppercase text-sm tracking-widest"><i class="fas fa-truck mr-2 text-orange-400"></i> Vendor Credit Manager</h1>
-    <a href="index.php" class="bg-slate-700 px-4 py-2 rounded-xl text-xs">Back to Dashboard</a>
+<nav class="bg-slate-900 text-white p-3 sm:p-4 shadow-lg" x-data="{ mobileOpen: false }">
+    <div class="flex justify-between items-center">
+        <h1 class="font-bold uppercase text-sm tracking-widest"><i class="fas fa-truck mr-2 text-orange-400"></i> Vendor Credit Manager</h1>
+        <div class="hidden sm:flex items-center">
+            <a href="index.php" class="bg-slate-700 px-4 py-2 rounded-xl text-xs">Back to Dashboard</a>
+        </div>
+        <button @click="mobileOpen = !mobileOpen" class="sm:hidden p-2 bg-slate-700 rounded-xl">
+            <i class="fas" :class="mobileOpen ? 'fa-xmark' : 'fa-bars'"></i>
+        </button>
+    </div>
+    <div x-show="mobileOpen" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="sm:hidden mt-4 pb-2 flex flex-col gap-2 border-t border-slate-700 pt-4">
+        <a href="index.php" class="p-3 bg-slate-700 rounded-xl text-[10px] font-black uppercase text-center"><i class="fas fa-arrow-left mr-2"></i>Back to Dashboard</a>
+    </div>
 </nav>
 
-<div class="container mx-auto px-4 mt-8">
+<div class="container mx-auto px-4 mt-8" x-data="{ show: false }" x-init="setTimeout(() => show = true, 50)" x-show="show" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         <div class="lg:col-span-8">
@@ -101,14 +119,17 @@ $vendors = $conn->query("SELECT
 <div id="paymentModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50">
     <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md">
         <h3 id="modalTitle" class="text-xl font-black mb-6 uppercase text-slate-800">Clear Payment</h3>
-        <form method="POST">
+        <form method="POST" x-data="{ loading: false }" @submit="loading = true">
             <input type="hidden" name="cat_id" id="modal_cat_id">
             <div class="space-y-4">
                 <div>
                     <label class="text-xs font-bold text-slate-400">AMOUNT TO PAY</label>
                     <input type="number" name="amount" id="modal_amount" class="w-full p-4 bg-slate-50 border rounded-2xl text-2xl font-black outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
-                <button type="submit" name="pay_vendor" class="w-full bg-indigo-600 text-white font-black py-4 rounded-2xl shadow-lg">CONFIRM PAYMENT</button>
+                <button type="submit" name="pay_vendor" :disabled="loading" class="w-full bg-indigo-600 text-white font-black py-4 rounded-2xl shadow-lg disabled:opacity-60">
+                    <span x-show="!loading">CONFIRM PAYMENT</span>
+                    <i x-show="loading" x-cloak class="fas fa-circle-notch fa-spin"></i>
+                </button>
                 <button type="button" onclick="closeModal()" class="w-full text-slate-400 text-xs font-bold uppercase">Cancel</button>
             </div>
         </form>

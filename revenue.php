@@ -35,20 +35,36 @@ $ledger = $conn->query("SELECT * FROM transactions WHERE MONTH(date) = $f_month 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Revenue Analytics | Simple EMS</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="pwa-register.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>[x-cloak] { display: none !important; }</style>
 </head>
 <body class="bg-slate-50 text-slate-800 pb-20">
 
-    <nav class="bg-green-600 text-white shadow-xl p-4 sticky top-0 z-50">
+    <nav class="bg-green-600 text-white shadow-xl p-3 sm:p-4 sticky top-0 z-50" x-data="{ mobileOpen: false }">
         <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold uppercase tracking-tighter"><i class="fas fa-chart-line mr-2"></i> Revenue Analytics</h1>
-            <a href="index.php" class="bg-green-700 px-4 py-2 rounded-xl text-xs font-bold transition-all"><i class="fas fa-arrow-left mr-1"></i> Dashboard</a>
+            <h1 class="text-lg sm:text-xl font-bold uppercase tracking-tighter"><i class="fas fa-chart-line mr-2"></i> Revenue Analytics</h1>
+            <div class="hidden sm:flex items-center">
+                <a href="index.php" class="bg-green-700 px-4 py-2 rounded-xl text-xs font-bold transition-all"><i class="fas fa-arrow-left mr-1"></i> Dashboard</a>
+            </div>
+            <button @click="mobileOpen = !mobileOpen" class="sm:hidden p-2 bg-green-700 rounded-xl">
+                <i class="fas" :class="mobileOpen ? 'fa-xmark' : 'fa-bars'"></i>
+            </button>
+        </div>
+        <div x-show="mobileOpen" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="sm:hidden container mx-auto mt-4 pb-2 flex flex-col gap-2 border-t border-green-500 pt-4">
+            <a href="index.php" class="p-3 bg-green-700 rounded-xl text-[10px] font-black uppercase text-center"><i class="fas fa-arrow-left mr-2"></i>Dashboard</a>
         </div>
     </nav>
 
-    <div class="container mx-auto px-4 py-8 max-w-6xl">
+    <div class="container mx-auto px-4 py-8 max-w-6xl" x-data="{ show: false }" x-init="setTimeout(() => show = true, 50)" x-show="show" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
         
         <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 mb-8 flex flex-wrap items-center justify-between gap-4">
             <div>
