@@ -35,6 +35,12 @@ if (isset($_POST['run_update'])) {
     sems_add_column($conn, 'global_settings', 'telegram_bot_token', "varchar(255) DEFAULT NULL", $messages, $errors);
     sems_add_column($conn, 'global_settings', 'telegram_allowed_chat_ids', "text DEFAULT NULL", $messages, $errors);
 
+    sems_add_column($conn, 'global_settings', 'remote_sync_enabled', "tinyint(1) NOT NULL DEFAULT 0", $messages, $errors);
+    sems_add_column($conn, 'global_settings', 'remote_sync_url', "varchar(500) DEFAULT NULL", $messages, $errors);
+    sems_add_column($conn, 'global_settings', 'remote_sync_api_key', "varchar(255) DEFAULT NULL", $messages, $errors);
+    sems_add_column($conn, 'global_settings', 'remote_sync_last_status', "varchar(255) DEFAULT NULL", $messages, $errors);
+    sems_add_column($conn, 'global_settings', 'last_remote_backup', "datetime DEFAULT NULL", $messages, $errors);
+
     $sql = "CREATE TABLE IF NOT EXISTS `telegram_logs` (
         `id` int(11) NOT NULL AUTO_INCREMENT,
         `chat_id` varchar(64) NOT NULL,
@@ -63,11 +69,21 @@ if (isset($_POST['run_update'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Update | Simple EMS</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="pwa-register.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
 <body class="min-h-screen bg-slate-100 text-slate-800">
     <main class="mx-auto flex min-h-screen max-w-3xl items-center px-4 py-10">
-        <section class="w-full rounded-3xl bg-white p-8 shadow-2xl">
+        <section class="w-full rounded-3xl bg-white p-8 shadow-2xl" x-data="{ show: false }" x-init="setTimeout(() => show = true, 50)" x-show="show" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
             <div class="mb-8 flex items-center gap-4">
                 <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 text-white">
                     <i class="fas fa-wand-magic-sparkles"></i>
@@ -79,11 +95,14 @@ if (isset($_POST['run_update'])) {
             </div>
 
             <p class="mb-6 text-sm font-medium leading-6 text-slate-500">
-                Run this once after uploading a new version to an existing installed system. This update adds Telegram integration settings and log tables.
+                Run this once after uploading a new version to an existing installed system. This update adds Telegram integration settings, log tables, and Remote Cloud Sync settings.
             </p>
 
             <?php if ($messages): ?>
-                <div class="mb-4 rounded-2xl border border-emerald-100 bg-emerald-50 p-4 text-sm font-bold text-emerald-700">
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
+                     x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                     class="fixed top-6 right-6 z-[100] max-w-sm rounded-2xl border border-emerald-100 bg-emerald-50 p-4 text-sm font-bold text-emerald-700 shadow-2xl">
                     <?php foreach ($messages as $message): ?>
                         <p><i class="fas fa-check mr-2"></i><?php echo htmlspecialchars($message); ?></p>
                     <?php endforeach; ?>
@@ -91,16 +110,20 @@ if (isset($_POST['run_update'])) {
             <?php endif; ?>
 
             <?php if ($errors): ?>
-                <div class="mb-4 rounded-2xl border border-rose-100 bg-rose-50 p-4 text-sm font-bold text-rose-700">
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
+                     x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                     class="fixed top-6 right-6 z-[100] max-w-sm rounded-2xl border border-rose-100 bg-rose-50 p-4 text-sm font-bold text-rose-700 shadow-2xl">
                     <?php foreach ($errors as $error): ?>
                         <p><i class="fas fa-circle-exclamation mr-2"></i><?php echo htmlspecialchars($error); ?></p>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
 
-            <form method="POST" class="flex flex-wrap gap-3">
-                <button type="submit" name="run_update" class="rounded-2xl bg-indigo-600 px-6 py-4 text-xs font-black uppercase tracking-widest text-white shadow-lg hover:bg-slate-900">
-                    Run Update
+            <form method="POST" class="flex flex-wrap gap-3" x-data="{ loading: false }" @submit="loading = true">
+                <button type="submit" name="run_update" :disabled="loading" class="rounded-2xl bg-indigo-600 px-6 py-4 text-xs font-black uppercase tracking-widest text-white shadow-lg hover:bg-slate-900 disabled:opacity-60">
+                    <span x-show="!loading">Run Update</span>
+                    <i x-show="loading" x-cloak class="fas fa-circle-notch fa-spin"></i>
                 </button>
                 <a href="settings.php" class="rounded-2xl bg-slate-100 px-6 py-4 text-xs font-black uppercase tracking-widest text-slate-600 hover:bg-slate-200">
                     Open Settings
