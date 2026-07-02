@@ -52,6 +52,31 @@ $net_profit = $totals['total_in'] - $totals['total_out'];
     <meta charset="UTF-8">
     <title>Master Ledger | Fiscal Record</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="pwa-register.js"></script>
+    <script>
+        function semsCounter(target) {
+            return {
+                display: '0.00',
+                run() {
+                    const start = performance.now();
+                    const duration = 800;
+                    const step = (now) => {
+                        const p = Math.min((now - start) / duration, 1);
+                        const val = target * p;
+                        this.display = val.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        if (p < 1) requestAnimationFrame(step); else this.display = target.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    };
+                    requestAnimationFrame(step);
+                }
+            };
+        }
+    </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @media print {
@@ -61,15 +86,16 @@ $net_profit = $totals['total_in'] - $totals['total_out'];
             .shadow-2xl { shadow: none !important; }
             table { border: 1px solid #e2e8f0; }
         }
+        [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 pb-20">
 
-    <nav class="bg-slate-900 text-white p-4 sticky top-0 z-50 shadow-2xl no-print">
+    <nav class="bg-slate-900 text-white p-3 sm:p-4 sticky top-0 z-50 shadow-2xl no-print" x-data="{ mobileOpen: false }">
         <div class="container mx-auto flex justify-between items-center">
-            <h1 class="font-black text-xl tracking-tighter italic uppercase">Master <span class="text-amber-400">Ledger</span></h1>
-            <div class="flex items-center gap-4">
-                <form class="flex gap-2">
+            <h1 class="font-black text-lg sm:text-xl tracking-tighter italic uppercase">Master <span class="text-amber-400">Ledger</span></h1>
+            <div class="hidden sm:flex items-center gap-4">
+                <form class="flex gap-2" x-data="{ loading: false }" @submit="loading = true">
                     <select name="m" class="bg-slate-800 border-none rounded-xl p-2 text-xs text-white font-bold">
                         <?php for($i=1; $i<=12; $i++): ?>
                             <option value="<?php echo $i; ?>" <?php echo ($f_month == $i) ? 'selected' : ''; ?>><?php echo date('F', mktime(0,0,0,$i,1)); ?></option>
@@ -80,7 +106,10 @@ $net_profit = $totals['total_in'] - $totals['total_out'];
                             <option value="<?php echo $i; ?>" <?php echo ($f_year == $i) ? 'selected' : ''; ?>><?php echo $i; ?></option>
                         <?php endfor; ?>
                     </select>
-                    <button type="submit" class="bg-amber-500 hover:bg-amber-600 px-4 py-2 rounded-xl text-xs font-black text-slate-900 transition-all uppercase">Load</button>
+                    <button type="submit" :disabled="loading" class="bg-amber-500 hover:bg-amber-600 px-4 py-2 rounded-xl text-xs font-black text-slate-900 transition-all uppercase disabled:opacity-60">
+                        <span x-show="!loading">Load</span>
+                        <i x-show="loading" x-cloak class="fas fa-circle-notch fa-spin"></i>
+                    </button>
                 </form>
                 <div class="h-8 w-[1px] bg-slate-700"></div>
                 <button onclick="window.print()" class="bg-emerald-600 px-4 py-2 rounded-xl text-xs font-black uppercase hover:bg-emerald-500 transition-all">
@@ -88,10 +117,37 @@ $net_profit = $totals['total_in'] - $totals['total_out'];
                 </button>
                 <a href="index.php" class="bg-slate-700 px-4 py-2 rounded-xl text-xs font-bold uppercase hover:bg-slate-600 transition-all">Close</a>
             </div>
+
+            <button @click="mobileOpen = !mobileOpen" class="sm:hidden p-2 bg-slate-800 rounded-xl">
+                <i class="fas" :class="mobileOpen ? 'fa-xmark' : 'fa-bars'"></i>
+            </button>
+        </div>
+
+        <div x-show="mobileOpen" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="sm:hidden container mx-auto mt-4 pb-2 flex flex-col gap-2 border-t border-slate-700 pt-4">
+            <form class="flex gap-2" x-data="{ loading: false }" @submit="loading = true">
+                <select name="m" class="bg-slate-800 border-none rounded-xl p-2 text-xs text-white font-bold flex-1">
+                    <?php for($i=1; $i<=12; $i++): ?>
+                        <option value="<?php echo $i; ?>" <?php echo ($f_month == $i) ? 'selected' : ''; ?>><?php echo date('F', mktime(0,0,0,$i,1)); ?></option>
+                    <?php endfor; ?>
+                </select>
+                <select name="y" class="bg-slate-800 border-none rounded-xl p-2 text-xs text-white font-bold flex-1">
+                    <?php for($i=2024; $i<=2030; $i++): ?>
+                        <option value="<?php echo $i; ?>" <?php echo ($f_year == $i) ? 'selected' : ''; ?>><?php echo $i; ?></option>
+                    <?php endfor; ?>
+                </select>
+                <button type="submit" :disabled="loading" class="bg-amber-500 hover:bg-amber-600 px-4 py-2 rounded-xl text-xs font-black text-slate-900 transition-all uppercase disabled:opacity-60">
+                    <span x-show="!loading">Load</span>
+                    <i x-show="loading" x-cloak class="fas fa-circle-notch fa-spin"></i>
+                </button>
+            </form>
+            <button onclick="window.print()" class="bg-emerald-600 px-4 py-2 rounded-xl text-xs font-black uppercase hover:bg-emerald-500 transition-all">
+                <i class="fas fa-file-pdf mr-2"></i> Export
+            </button>
+            <a href="index.php" class="bg-slate-700 px-4 py-2 rounded-xl text-xs font-bold uppercase hover:bg-slate-600 transition-all text-center">Close</a>
         </div>
     </nav>
 
-    <div class="container mx-auto px-4 py-10 max-w-6xl print-padding">
+    <div class="container mx-auto px-4 py-10 max-w-6xl print-padding" x-data="{ show: false }" x-init="setTimeout(() => show = true, 50)" x-show="show" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
         
         <div class="hidden print:block text-center mb-10 border-b-2 border-slate-900 pb-6">
             <h1 class="text-4xl font-black uppercase tracking-widest"><?php echo "HOTEL MANAGEMENT SYSTEM"; ?></h1>
@@ -100,21 +156,21 @@ $net_profit = $totals['total_in'] - $totals['total_out'];
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border-l-8 border-green-500">
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border-l-8 border-green-500" x-data="semsCounter(<?php echo (float)($totals['total_in'] ?? 0); ?>)" x-init="run()">
                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Period Inflow</p>
-                <h2 class="text-3xl font-black text-slate-800">₹<?php echo number_format($totals['total_in'] ?? 0, 2); ?></h2>
+                <h2 class="text-3xl font-black text-slate-800">₹<span x-text="display">0.00</span></h2>
                 <span class="text-[9px] font-bold text-green-600 uppercase tracking-tighter italic">Total Cash & UPI Sales</span>
             </div>
-            
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border-l-8 border-red-500">
+
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border-l-8 border-red-500" x-data="semsCounter(<?php echo (float)($totals['total_out'] ?? 0); ?>)" x-init="run()">
                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Period Outflow</p>
-                <h2 class="text-3xl font-black text-slate-800">₹<?php echo number_format($totals['total_out'] ?? 0, 2); ?></h2>
+                <h2 class="text-3xl font-black text-slate-800">₹<span x-text="display">0.00</span></h2>
                 <span class="text-[9px] font-bold text-red-600 uppercase tracking-tighter italic">Bills + Salaries + Groceries</span>
             </div>
 
-            <div class="<?php echo $net_profit >= 0 ? 'bg-slate-900' : 'bg-red-900'; ?> p-8 rounded-[2.5rem] shadow-2xl text-white relative overflow-hidden">
+            <div class="<?php echo $net_profit >= 0 ? 'bg-slate-900' : 'bg-red-900'; ?> p-8 rounded-[2.5rem] shadow-2xl text-white relative overflow-hidden" x-data="semsCounter(<?php echo (float)$net_profit; ?>)" x-init="run()">
                 <p class="text-indigo-300 text-[10px] font-black uppercase tracking-widest mb-1">Net Balance</p>
-                <h2 class="text-3xl font-black">₹<?php echo number_format($net_profit, 2); ?></h2>
+                <h2 class="text-3xl font-black">₹<span x-text="display">0.00</span></h2>
                 <div class="mt-2">
                     <span class="px-3 py-1 rounded-full text-[8px] font-black uppercase <?php echo $net_profit >= 0 ? 'bg-green-500' : 'bg-red-500'; ?>">
                         <?php echo $net_profit >= 0 ? 'Profitable Period' : 'Operating Loss'; ?>

@@ -121,24 +121,57 @@ if (isset($_GET['view_id'])) {
 <head>
     <meta charset="UTF-8">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="pwa-register.js"></script>
+    <script>
+        function semsCounter(target) {
+            return {
+                display: '0.00',
+                run() {
+                    const start = performance.now();
+                    const duration = 800;
+                    const step = (now) => {
+                        const p = Math.min((now - start) / duration, 1);
+                        const val = target * p;
+                        this.display = val.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        if (p < 1) requestAnimationFrame(step); else this.display = target.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    };
+                    requestAnimationFrame(step);
+                }
+            };
+        }
+    </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <title>Staff Master Hub | <?php echo $brand_name; ?></title>
     <style>
         html { scroll-behavior: smooth; }
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 10px; }
+        [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen">
 
-<nav class="bg-slate-900 text-white p-5 shadow-2xl sticky top-0 z-50 border-b border-indigo-500/30">
+<nav class="bg-slate-900 text-white p-3 sm:p-5 shadow-2xl sticky top-0 z-50 border-b border-indigo-500/30" x-data="{ mobileOpen: false }">
     <div class="container mx-auto flex justify-between items-center">
-        <h1 class="text-xl font-black italic tracking-tighter uppercase text-indigo-400"><?php echo $brand_name; ?> <span class="text-white text-[10px] not-italic ml-2 opacity-50 tracking-widest">STAFF HUB</span></h1>
-        <a href="index.php" class="bg-indigo-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 transition-all">Dashboard</a>
+        <h1 class="text-lg sm:text-xl font-black italic tracking-tighter uppercase text-indigo-400"><?php echo $brand_name; ?> <span class="text-white text-[10px] not-italic ml-2 opacity-50 tracking-widest">STAFF HUB</span></h1>
+        <a href="index.php" class="hidden sm:inline-block bg-indigo-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 transition-all">Dashboard</a>
+        <button @click="mobileOpen = !mobileOpen" class="sm:hidden p-2 bg-slate-800 rounded-xl">
+            <i class="fas" :class="mobileOpen ? 'fa-xmark' : 'fa-bars'"></i>
+        </button>
+    </div>
+
+    <div x-show="mobileOpen" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="sm:hidden container mx-auto mt-4 pb-2 flex flex-col gap-2 border-t border-slate-700 pt-4">
+        <a href="index.php" class="p-3 bg-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-widest text-center"><i class="fas fa-house mr-2"></i>Dashboard</a>
     </div>
 </nav>
 
-<div class="container mx-auto px-4 mt-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
+<div class="container mx-auto px-4 mt-10 grid grid-cols-1 lg:grid-cols-12 gap-8" x-data="{ show: false }" x-init="setTimeout(() => show = true, 50)" x-show="show" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
     
     <div class="lg:col-span-4 space-y-6">
         <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200">
@@ -222,7 +255,7 @@ if (isset($_GET['view_id'])) {
                     <h3 class="font-black text-slate-800 uppercase text-xs tracking-widest"><?php echo $selected_staff['name']; ?>'s Hub</h3>
                     <p class="text-[10px] text-indigo-500 font-bold uppercase">Viewing <?php echo date('F Y', mktime(0, 0, 0, $current_month, 1, $current_year)); ?></p>
                 </div>
-                <form method="GET" class="flex gap-2">
+                <form method="GET" class="flex gap-2" x-data="{ loading: false }" @submit="loading = true">
                     <input type="hidden" name="view_id" value="<?php echo $selected_staff['id']; ?>">
                     <select name="m" class="p-3 border rounded-xl text-[10px] font-black bg-slate-50">
                         <?php for($i=1; $i<=12; $i++): ?>
@@ -234,26 +267,29 @@ if (isset($_GET['view_id'])) {
                             <option value="<?php echo $i; ?>" <?php echo ($current_year == $i) ? 'selected' : ''; ?>><?php echo $i; ?></option>
                         <?php endfor; ?>
                     </select>
-                    <button type="submit" class="bg-slate-800 text-white px-5 rounded-xl text-[10px] font-black uppercase">Filter</button>
+                    <button type="submit" :disabled="loading" class="bg-slate-800 text-white px-5 rounded-xl text-[10px] font-black uppercase disabled:opacity-60">
+                        <span x-show="!loading">Filter</span>
+                        <i x-show="loading" x-cloak class="fas fa-circle-notch fa-spin"></i>
+                    </button>
                 </form>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="bg-slate-900 text-white p-6 rounded-[2.5rem] shadow-xl relative overflow-hidden">
+                <div class="bg-slate-900 text-white p-6 rounded-[2.5rem] shadow-xl relative overflow-hidden" x-data="semsCounter(<?php echo (float)$yearly_earned; ?>)" x-init="run()">
                     <div class="absolute right-0 top-0 p-4 opacity-10">
                         <i class="fas fa-calendar-alt text-6xl"></i>
                     </div>
                     <p class="text-[10px] font-black text-indigo-300 uppercase tracking-widest mb-1">Full Year Work Value (<?php echo $current_year; ?>)</p>
-                    <h2 class="text-3xl font-black"><?php echo $currency.number_format($yearly_earned, 2); ?></h2>
+                    <h2 class="text-3xl font-black"><?php echo $currency; ?><span x-text="display">0.00</span></h2>
                     <p class="text-[8px] uppercase font-bold text-slate-400 mt-2">Calculated based on attendance history</p>
                 </div>
 
-                <div class="bg-indigo-600 text-white p-6 rounded-[2.5rem] shadow-xl relative overflow-hidden">
+                <div class="bg-indigo-600 text-white p-6 rounded-[2.5rem] shadow-xl relative overflow-hidden" x-data="semsCounter(<?php echo (float)$yearly_paid; ?>)" x-init="run()">
                     <div class="absolute right-0 top-0 p-4 opacity-10">
                         <i class="fas fa-hand-holding-usd text-6xl"></i>
                     </div>
                     <p class="text-[10px] font-black text-indigo-100 uppercase tracking-widest mb-1">Full Year Total Paid (<?php echo $current_year; ?>)</p>
-                    <h2 class="text-3xl font-black"><?php echo $currency.number_format($yearly_paid, 2); ?></h2>
+                    <h2 class="text-3xl font-black"><?php echo $currency; ?><span x-text="display">0.00</span></h2>
                     <p class="text-[8px] uppercase font-bold text-indigo-200 mt-2">Includes Salary + Advances for <?php echo $current_year; ?></p>
                 </div>
             </div>
