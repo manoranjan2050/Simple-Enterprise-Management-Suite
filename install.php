@@ -164,7 +164,15 @@ if (isset($_GET['status']) && $_GET['status'] === 'done') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Install Simple Enterprise Management Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="pwa-register.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>[x-cloak] { display: none !important; }</style>
 </head>
 <body class="min-h-screen bg-slate-950 text-slate-100">
     <main class="mx-auto flex min-h-screen w-full max-w-6xl items-center px-4 py-10">
@@ -187,7 +195,7 @@ if (isset($_GET['status']) && $_GET['status'] === 'done') {
 
             <section class="rounded-3xl bg-white p-6 text-slate-900 shadow-2xl md:p-8">
                 <?php if ($success): ?>
-                    <div class="flex min-h-[520px] flex-col items-center justify-center text-center">
+                    <div class="flex min-h-[520px] flex-col items-center justify-center text-center" x-data="{ show: false }" x-init="setTimeout(() => show = true, 50)" x-show="show" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
                         <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-emerald-100 text-4xl text-emerald-600">
                             <i class="fas fa-check"></i>
                         </div>
@@ -198,20 +206,24 @@ if (isset($_GET['status']) && $_GET['status'] === 'done') {
                         </a>
                     </div>
                 <?php else: ?>
+                    <div x-data="{ show: false }" x-init="setTimeout(() => show = true, 50)" x-show="show" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
                     <div class="mb-6">
                         <p class="text-xs font-black uppercase tracking-[0.3em] text-indigo-600">First time setup</p>
                         <h2 class="mt-2 text-2xl font-black uppercase tracking-tight">Connect, Brand, Admin</h2>
                     </div>
 
                     <?php if ($errors): ?>
-                        <div class="mb-6 rounded-2xl border border-rose-100 bg-rose-50 p-4 text-sm font-bold text-rose-700">
+                        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+                             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                             class="fixed top-6 right-6 z-[100] max-w-sm rounded-2xl border border-rose-100 bg-rose-50 p-4 text-sm font-bold text-rose-700 shadow-2xl">
                             <?php foreach ($errors as $error): ?>
                                 <div class="flex gap-2"><i class="fas fa-circle-exclamation mt-1"></i><span><?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?></span></div>
                             <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
 
-                    <form method="POST" class="grid gap-6">
+                    <form method="POST" class="grid gap-6" x-data="{ loading: false }" @submit="loading = true">
                         <div class="grid gap-4 md:grid-cols-2">
                             <label class="grid gap-2 text-xs font-black uppercase text-slate-500">DB Host
                                 <input name="db_host" value="<?php echo old('db_host', 'localhost'); ?>" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-bold text-slate-900 outline-none focus:border-indigo-500" required>
@@ -270,10 +282,12 @@ if (isset($_GET['status']) && $_GET['status'] === 'done') {
                             </label>
                         </div>
 
-                        <button class="rounded-2xl bg-indigo-600 px-6 py-5 text-xs font-black uppercase tracking-widest text-white shadow-xl shadow-indigo-100 transition hover:-translate-y-0.5 hover:bg-slate-950" type="submit">
-                            Install Now
+                        <button class="rounded-2xl bg-indigo-600 px-6 py-5 text-xs font-black uppercase tracking-widest text-white shadow-xl shadow-indigo-100 transition hover:-translate-y-0.5 hover:bg-slate-950 disabled:opacity-60" type="submit" :disabled="loading">
+                            <span x-show="!loading">Install Now</span>
+                            <i x-show="loading" x-cloak class="fas fa-circle-notch fa-spin"></i>
                         </button>
                     </form>
+                    </div>
                 <?php endif; ?>
             </section>
         </div>

@@ -17,15 +17,23 @@ $brand_name = $global_set['hotel_name'] ?? "SIMPLE EMS";
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration Restricted | <?php echo $brand_name; ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="pwa-register.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body { background: #0f172a; }
         .glow { box-shadow: 0 0 50px rgba(99, 102, 241, 0.2); }
+        [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-6">
 
-    <div class="max-w-md w-full bg-slate-900 rounded-[3rem] p-10 text-center border border-slate-800 glow">
+    <div class="max-w-md w-full bg-slate-900 rounded-[3rem] p-10 text-center border border-slate-800 glow" x-data="{ show: false }" x-init="setTimeout(() => show = true, 50)" x-show="show" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
         
         <div class="w-24 h-24 bg-rose-500/10 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 border border-rose-500/20">
             <i class="fas fa-user-lock text-rose-500 text-4xl"></i>
