@@ -80,27 +80,53 @@ if($range == '365') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $brand_name; ?> | Executive Dashboard</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="pwa-register.js"></script>
+    <script>
+        function semsCounter(target) {
+            return {
+                display: '0.00',
+                run() {
+                    const start = performance.now();
+                    const duration = 800;
+                    const step = (now) => {
+                        const p = Math.min((now - start) / duration, 1);
+                        const val = target * p;
+                        this.display = val.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        if (p < 1) requestAnimationFrame(step); else this.display = target.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    };
+                    requestAnimationFrame(step);
+                }
+            };
+        }
+    </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
         .card-hover:hover { transform: translateY(-5px); transition: all 0.3s ease; }
+        [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 pb-10">
 
-    <nav class="bg-slate-900 text-white p-4 sticky top-0 z-50 border-b border-slate-700 shadow-2xl">
+    <nav class="bg-slate-900 text-white p-3 sm:p-4 sticky top-0 z-50 border-b border-slate-700 shadow-2xl" x-data="{ mobileOpen: false }">
         <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl md:text-2xl font-black italic tracking-tighter text-indigo-400 uppercase">
+            <h1 class="text-lg sm:text-xl md:text-2xl font-black italic tracking-tighter text-indigo-400 uppercase">
                 <?php echo $brand_name; ?>
             </h1>
-            
-            <div class="flex items-center space-x-6">
+
+            <div class="hidden sm:flex items-center space-x-6">
                 <a href="settings.php" class="p-2 bg-slate-800 hover:bg-indigo-600 rounded-xl transition">
                     <i class="fas fa-cog text-slate-300"></i>
                 </a>
-                
+
                 <div class="flex items-center space-x-3 border-l border-slate-700 pl-6">
                     <div class="text-right hidden md:block">
                         <p class="text-[10px] font-black uppercase text-indigo-400 leading-none">
@@ -108,9 +134,9 @@ if($range == '365') {
                         </p>
                         <a href="profile.php" class="text-[9px] text-slate-400 font-bold uppercase tracking-tighter hover:text-white transition">Edit Profile</a>
                     </div>
-                    <?php 
-                        $img_src = (!empty($user_data['profile_pic']) && file_exists("uploads/".$user_data['profile_pic'])) 
-                                   ? "uploads/".$user_data['profile_pic'] 
+                    <?php
+                        $img_src = (!empty($user_data['profile_pic']) && file_exists("uploads/".$user_data['profile_pic']))
+                                   ? "uploads/".$user_data['profile_pic']
                                    : "https://ui-avatars.com/api/?name=".urlencode($admin_session_user)."&background=6366f1&color=fff";
                     ?>
                     <a href="profile.php">
@@ -119,17 +145,36 @@ if($range == '365') {
                     <a href="logout.php" class="bg-red-500/10 text-red-500 border border-red-500/20 px-3 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-red-500 hover:text-white transition-all">Logout</a>
                 </div>
             </div>
+
+            <button @click="mobileOpen = !mobileOpen" class="sm:hidden p-2 bg-slate-800 rounded-xl">
+                <i class="fas" :class="mobileOpen ? 'fa-xmark' : 'fa-bars'"></i>
+            </button>
+        </div>
+
+        <div x-show="mobileOpen" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="sm:hidden container mx-auto mt-4 pb-2 flex flex-col gap-2 border-t border-slate-700 pt-4">
+            <div class="flex items-center gap-3 mb-2">
+                <?php
+                    $img_src = (!empty($user_data['profile_pic']) && file_exists("uploads/".$user_data['profile_pic']))
+                               ? "uploads/".$user_data['profile_pic']
+                               : "https://ui-avatars.com/api/?name=".urlencode($admin_session_user)."&background=6366f1&color=fff";
+                ?>
+                <img src="<?php echo $img_src; ?>" class="w-10 h-10 rounded-full border-2 border-indigo-500 object-cover">
+                <p class="text-[10px] font-black uppercase text-indigo-400"><?php echo !empty($user_data['full_name']) ? $user_data['full_name'] : $admin_session_user; ?></p>
+            </div>
+            <a href="settings.php" class="p-3 bg-slate-800 rounded-xl text-[10px] font-black uppercase"><i class="fas fa-cog mr-2"></i>Settings</a>
+            <a href="profile.php" class="p-3 bg-slate-800 rounded-xl text-[10px] font-black uppercase"><i class="fas fa-user mr-2"></i>Edit Profile</a>
+            <a href="logout.php" class="p-3 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl text-[10px] font-black uppercase"><i class="fas fa-right-from-bracket mr-2"></i>Logout</a>
         </div>
     </nav>
 
-    <div class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-4 py-8" x-data="{ show: false }" x-init="setTimeout(() => show = true, 50)" x-show="show" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
         
         <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 mb-10 flex flex-wrap items-center justify-between gap-4">
             <div>
                 <h3 class="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">Dashboard Data Filter</h3>
                 <p class="text-xs font-bold text-slate-600 uppercase">Showing stats for: <span class="text-indigo-600"><?php echo date('F Y', mktime(0,0,0,$f_month, 1, $f_year)); ?></span></p>
             </div>
-            <form method="GET" class="flex gap-2">
+            <form method="GET" class="flex gap-2" x-data="{ loading: false }" @submit="loading = true">
                 <select name="m" class="p-3 border rounded-xl text-[10px] font-black bg-slate-50 uppercase">
                     <?php for($i=1; $i<=12; $i++): ?>
                         <option value="<?php echo $i; ?>" <?php echo ($f_month == $i) ? 'selected' : ''; ?>><?php echo date('F', mktime(0,0,0,$i,1)); ?></option>
@@ -140,49 +185,52 @@ if($range == '365') {
                         <option value="<?php echo $i; ?>" <?php echo ($f_year == $i) ? 'selected' : ''; ?>><?php echo $i; ?></option>
                     <?php endfor; ?>
                 </select>
-                <button type="submit" class="bg-indigo-600 text-white px-6 rounded-xl text-[10px] font-black uppercase shadow-lg hover:bg-indigo-700 transition-all">Apply</button>
+                <button type="submit" :disabled="loading" class="bg-indigo-600 text-white px-6 rounded-xl text-[10px] font-black uppercase shadow-lg hover:bg-indigo-700 transition-all disabled:opacity-60">
+                    <span x-show="!loading">Apply</span>
+                    <i x-show="loading" x-cloak class="fas fa-circle-notch fa-spin"></i>
+                </button>
             </form>
         </div>
 
-        <div class="flex flex-nowrap lg:flex-wrap gap-4 mb-10 overflow-x-auto pb-4">
-            <a href="collection.php" class="flex-shrink-0 bg-white px-6 py-4 rounded-3xl shadow-sm border border-slate-200 card-hover">
+        <div class="flex flex-nowrap lg:flex-wrap gap-3 sm:gap-4 mb-10 overflow-x-auto pb-4">
+            <a href="collection.php" x-data x-init="setTimeout(() => $el.classList.remove('opacity-0','translate-y-3'), 60)" class="flex-shrink-0 bg-white px-4 sm:px-6 py-3 sm:py-4 rounded-3xl shadow-sm border border-slate-200 card-hover opacity-0 translate-y-3 transition-all duration-300">
                 <i class="fas fa-cash-register text-green-500 mb-2 block text-xl"></i>
                 <span class="font-bold text-[10px] uppercase">Cash Collection</span>
             </a>
-            <a href="revenue.php" class="flex-shrink-0 bg-white px-6 py-4 rounded-3xl shadow-sm border border-slate-200 card-hover">
+            <a href="revenue.php" x-data x-init="setTimeout(() => $el.classList.remove('opacity-0','translate-y-3'), 110)" class="flex-shrink-0 bg-white px-4 sm:px-6 py-3 sm:py-4 rounded-3xl shadow-sm border border-slate-200 card-hover opacity-0 translate-y-3 transition-all duration-300">
                 <i class="fas fa-chart-line text-indigo-500 mb-2 block text-xl"></i>
                 <span class="font-bold text-[10px] uppercase">Revenue Log</span>
             </a>
-            <a href="expenses.php" class="flex-shrink-0 bg-white px-6 py-4 rounded-3xl shadow-sm border border-slate-200 card-hover">
+            <a href="expenses.php" x-data x-init="setTimeout(() => $el.classList.remove('opacity-0','translate-y-3'), 160)" class="flex-shrink-0 bg-white px-4 sm:px-6 py-3 sm:py-4 rounded-3xl shadow-sm border border-slate-200 card-hover opacity-0 translate-y-3 transition-all duration-300">
                 <i class="fas fa-wallet text-red-500 mb-2 block text-xl"></i>
                 <span class="font-bold text-[10px] uppercase">Expenses</span>
             </a>
-            <a href="vendor_khata.php" class="flex-shrink-0 bg-white px-6 py-4 rounded-3xl shadow-sm border border-slate-200 card-hover">
+            <a href="vendor_khata.php" x-data x-init="setTimeout(() => $el.classList.remove('opacity-0','translate-y-3'), 210)" class="flex-shrink-0 bg-white px-4 sm:px-6 py-3 sm:py-4 rounded-3xl shadow-sm border border-slate-200 card-hover opacity-0 translate-y-3 transition-all duration-300">
                 <i class="fas fa-truck-loading text-orange-600 mb-2 block text-xl"></i>
                 <span class="font-bold text-[10px] uppercase">Vendors</span>
             </a>
-            <a href="staff_khata.php" class="flex-shrink-0 bg-white px-6 py-4 rounded-3xl shadow-sm border border-slate-200 card-hover">
+            <a href="staff_khata.php" x-data x-init="setTimeout(() => $el.classList.remove('opacity-0','translate-y-3'), 260)" class="flex-shrink-0 bg-white px-4 sm:px-6 py-3 sm:py-4 rounded-3xl shadow-sm border border-slate-200 card-hover opacity-0 translate-y-3 transition-all duration-300">
                 <i class="fas fa-users-cog text-indigo-500 mb-2 block text-xl"></i>
                 <span class="font-bold text-[10px] uppercase">Staff Hub</span>
             </a>
-            <a href="reports.php" class="flex-shrink-0 bg-white px-6 py-4 rounded-3xl shadow-sm border border-slate-200 card-hover group">
+            <a href="reports.php" x-data x-init="setTimeout(() => $el.classList.remove('opacity-0','translate-y-3'), 310)" class="flex-shrink-0 bg-white px-4 sm:px-6 py-3 sm:py-4 rounded-3xl shadow-sm border border-slate-200 card-hover group opacity-0 translate-y-3 transition-all duration-300">
                 <div class="relative mb-2">
                     <i class="fas fa-file-lines text-slate-300 text-xl"></i>
                     <i class="fas fa-chart-pie text-emerald-500 text-[10px] absolute -bottom-1 -right-1 bg-white rounded-full p-0.5"></i>
                 </div>
                 <span class="font-bold text-[10px] uppercase block text-slate-800">Reports</span>
             </a>
-            <a href="analytics.php" class="flex-shrink-0 bg-white px-6 py-4 rounded-3xl shadow-sm border border-slate-200 card-hover group transition-all hover:border-indigo-200 hover:bg-indigo-50/30">
+            <a href="analytics.php" x-data x-init="setTimeout(() => $el.classList.remove('opacity-0','translate-y-3'), 360)" class="flex-shrink-0 bg-white px-4 sm:px-6 py-3 sm:py-4 rounded-3xl shadow-sm border border-slate-200 card-hover group transition-all hover:border-indigo-200 hover:bg-indigo-50/30 opacity-0 translate-y-3 duration-300">
         <div class="w-10 h-10 bg-indigo-50 rounded-2xl flex items-center justify-center mb-2 group-hover:bg-indigo-600 transition-all duration-300">
             <i class="fas fa-brain text-indigo-600 text-lg group-hover:text-white transition-colors"></i>
         </div>
         <span class="font-bold text-[10px] uppercase block text-indigo-900 tracking-wider">Analytics</span>
     </a>
-    <a href="db_manager.php" class="flex-shrink-0 bg-white px-6 py-4 rounded-3xl shadow-sm border border-slate-200 card-hover">
+    <a href="db_manager.php" x-data x-init="setTimeout(() => $el.classList.remove('opacity-0','translate-y-3'), 410)" class="flex-shrink-0 bg-white px-4 sm:px-6 py-3 sm:py-4 rounded-3xl shadow-sm border border-slate-200 card-hover opacity-0 translate-y-3 transition-all duration-300">
         <i class="fas fa-cloud-upload-alt text-emerald-500 mb-2 block text-xl"></i>
         <span class="font-bold text-[10px] uppercase tracking-wider">Cloud Sync</span>
     </a>
-    <a href="master_ledger.php" class="flex-shrink-0 bg-white px-6 py-4 rounded-3xl shadow-sm border border-slate-200 card-hover group transition-all hover:border-amber-200 hover:bg-amber-50/30">
+    <a href="master_ledger.php" x-data x-init="setTimeout(() => $el.classList.remove('opacity-0','translate-y-3'), 460)" class="flex-shrink-0 bg-white px-4 sm:px-6 py-3 sm:py-4 rounded-3xl shadow-sm border border-slate-200 card-hover group transition-all hover:border-amber-200 hover:bg-amber-50/30 opacity-0 translate-y-3 duration-300">
         <div class="w-10 h-10 bg-amber-50 rounded-2xl flex items-center justify-center mb-2 group-hover:bg-amber-500 transition-all duration-300">
             <i class="fas fa-book-bookmark text-amber-600 text-lg group-hover:text-white transition-colors"></i>
         </div>
@@ -191,26 +239,26 @@ if($range == '365') {
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <div class="glass p-8 rounded-[2.5rem] shadow-xl border border-white card-hover bg-gradient-to-br from-white to-green-50">
+            <div class="glass p-8 rounded-[2.5rem] shadow-xl border border-white card-hover bg-gradient-to-br from-white to-green-50" x-data="semsCounter(<?php echo (float)$total_rev; ?>)" x-init="run()">
                 <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Total Revenue</p>
-                <h2 class="text-4xl font-black text-slate-900 mb-4"><?php echo $currency.number_format($total_rev, 2); ?></h2>
+                <h2 class="text-4xl font-black text-slate-900 mb-4"><?php echo $currency; ?><span x-text="display">0.00</span></h2>
                 <div class="flex space-x-2">
                     <span class="bg-green-100 text-green-600 text-[9px] px-2 py-1 rounded-lg font-black">CASH: <?php echo number_format($sales['c']); ?></span>
                     <span class="bg-blue-100 text-blue-600 text-[9px] px-2 py-1 rounded-lg font-black">UPI: <?php echo number_format($sales['o']); ?></span>
                 </div>
             </div>
 
-            <div class="glass p-8 rounded-[2.5rem] shadow-xl border border-white card-hover bg-gradient-to-br from-white to-red-50">
+            <div class="glass p-8 rounded-[2.5rem] shadow-xl border border-white card-hover bg-gradient-to-br from-white to-red-50" x-data="semsCounter(<?php echo (float)$total_exp; ?>)" x-init="run()">
                 <p class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Total Expenses</p>
-                <h2 class="text-4xl font-black text-slate-900 mb-4"><?php echo $currency.number_format($total_exp, 2); ?></h2>
+                <h2 class="text-4xl font-black text-slate-900 mb-4"><?php echo $currency; ?><span x-text="display">0.00</span></h2>
                 <p class="text-[9px] text-slate-400 font-bold uppercase italic tracking-tighter">Bills, Daily Inventory & Staff</p>
             </div>
 
-            <div class="bg-slate-900 p-8 rounded-[2.5rem] shadow-2xl card-hover text-white">
+            <div class="bg-slate-900 p-8 rounded-[2.5rem] shadow-2xl card-hover text-white" x-data="semsCounter(<?php echo (float)$total_profit; ?>)" x-init="run()">
                 <p class="text-indigo-300 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Net Business Profit</p>
-                <h2 class="text-4xl font-black text-white mb-4"><?php echo $currency.number_format($total_profit, 2); ?></h2>
+                <h2 class="text-4xl font-black text-white mb-4"><?php echo $currency; ?><span x-text="display">0.00</span></h2>
                 <div class="h-2 w-full bg-slate-700 rounded-full overflow-hidden">
-                    <div class="h-full bg-indigo-500" style="width: <?php echo ($total_rev > 0) ? ($total_profit / $total_rev * 100) : 0; ?>%"></div>
+                    <div class="h-full bg-indigo-500 transition-all duration-1000 ease-out" style="width: <?php echo ($total_rev > 0) ? ($total_profit / $total_rev * 100) : 0; ?>%"></div>
                 </div>
             </div>
         </div>

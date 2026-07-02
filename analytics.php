@@ -92,24 +92,50 @@ while($r = $cat_res->fetch_assoc()) { $cat_labels[] = strtoupper($r['category_na
     <meta charset="UTF-8">
     <title><?php echo $report_title; ?> | <?php echo $brand_name; ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="pwa-register.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function semsCounter(target) {
+            return {
+                display: '0.00',
+                run() {
+                    const start = performance.now();
+                    const duration = 800;
+                    const step = (now) => {
+                        const p = Math.min((now - start) / duration, 1);
+                        const val = target * p;
+                        this.display = val.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        if (p < 1) requestAnimationFrame(step); else this.display = target.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    };
+                    requestAnimationFrame(step);
+                }
+            };
+        }
+    </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @media print { .no-print { display: none; } body { background: white; } .chart-card { border: 1px solid #eee; } }
         .chart-container { position: relative; height: 320px; width: 100%; }
+        [x-cloak] { display: none !important; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 pb-20">
 
-    <nav class="bg-slate-900 text-white p-6 shadow-2xl sticky top-0 z-50 no-print">
+    <nav class="bg-slate-900 text-white p-4 sm:p-6 shadow-2xl sticky top-0 z-50 no-print" x-data="{ mobileOpen: false }">
         <div class="container mx-auto flex justify-between items-center">
             <div class="flex items-center gap-4">
                 <div class="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
                     <i class="fas fa-chart-line text-white"></i>
                 </div>
-                <h1 class="text-xl font-black uppercase tracking-tighter italic">Resto <span class="text-indigo-400">Intelligence</span></h1>
+                <h1 class="text-lg sm:text-xl font-black uppercase tracking-tighter italic">Resto <span class="text-indigo-400">Intelligence</span></h1>
             </div>
-            <div class="flex items-center gap-4">
+            <div class="hidden sm:flex items-center gap-4">
                 <?php if($view_month): ?>
                     <a href="analytics.php?y=<?php echo $view_year; ?>" class="bg-slate-700 px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-600 transition-all">
                         <i class="fas fa-arrow-left mr-2"></i> Annual View
@@ -122,10 +148,22 @@ while($r = $cat_res->fetch_assoc()) { $cat_labels[] = strtoupper($r['category_na
                         <i class="fas fa-home mr-2 text-sm text-indigo-400"></i> Back to Dashboard
                     </a>
             </div>
+
+            <button @click="mobileOpen = !mobileOpen" class="sm:hidden p-2 bg-slate-800 rounded-xl">
+                <i class="fas" :class="mobileOpen ? 'fa-xmark' : 'fa-bars'"></i>
+            </button>
+        </div>
+
+        <div x-show="mobileOpen" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="sm:hidden container mx-auto mt-4 pb-2 flex flex-col gap-2 border-t border-slate-700 pt-4">
+            <?php if($view_month): ?>
+                <a href="analytics.php?y=<?php echo $view_year; ?>" class="bg-slate-700 p-3 rounded-xl text-[10px] font-black uppercase tracking-widest text-center"><i class="fas fa-arrow-left mr-2"></i> Annual View</a>
+            <?php endif; ?>
+            <button onclick="window.print()" class="bg-emerald-600 p-3 rounded-xl text-[10px] font-black uppercase tracking-widest"><i class="fas fa-file-pdf mr-2"></i> Export Report</button>
+            <a href="index.php" class="bg-slate-800 border border-slate-700 p-3 rounded-xl text-[10px] font-black uppercase tracking-widest text-center"><i class="fas fa-home mr-2 text-indigo-400"></i> Back to Dashboard</a>
         </div>
     </nav>
 
-    <div class="container mx-auto px-4 mt-10">
+    <div class="container mx-auto px-4 mt-10" x-data="{ show: false }" x-init="setTimeout(() => show = true, 50)" x-show="show" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
         
         <div class="flex justify-between items-end mb-10 no-print">
             <div>
@@ -144,22 +182,22 @@ while($r = $cat_res->fetch_assoc()) { $cat_labels[] = strtoupper($r['category_na
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border-t-8 border-emerald-500">
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border-t-8 border-emerald-500" x-data="semsCounter(<?php echo (float)$y_rev; ?>)" x-init="run()">
                 <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">Total Revenue</p>
-                <h2 class="text-4xl font-black text-slate-900"><?php echo $currency.number_format($y_rev); ?></h2>
+                <h2 class="text-4xl font-black text-slate-900"><?php echo $currency; ?><span x-text="display">0.00</span></h2>
                 <p class="text-[9px] text-emerald-600 font-bold mt-2 uppercase tracking-tighter"><i class="fas fa-arrow-trend-up mr-1"></i> Gross Inflow</p>
             </div>
 
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border-t-8 border-rose-500">
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-xl border-t-8 border-rose-500" x-data="semsCounter(<?php echo (float)$y_exp; ?>)" x-init="run()">
                 <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">Total Expenses</p>
-                <h2 class="text-4xl font-black text-slate-900"><?php echo $currency.number_format($y_exp); ?></h2>
+                <h2 class="text-4xl font-black text-slate-900"><?php echo $currency; ?><span x-text="display">0.00</span></h2>
                 <p class="text-[9px] text-rose-600 font-bold mt-2 uppercase tracking-tighter"><i class="fas fa-arrow-trend-down mr-1"></i> Total Outflow</p>
             </div>
 
-            <div class="bg-slate-900 p-8 rounded-[2.5rem] shadow-2xl text-white relative overflow-hidden">
+            <div class="bg-slate-900 p-8 rounded-[2.5rem] shadow-2xl text-white relative overflow-hidden" x-data="semsCounter(<?php echo (float)$y_profit; ?>)" x-init="run()">
                 <div class="absolute -right-4 -top-4 opacity-10 text-8xl"><i class="fas fa-coins"></i></div>
                 <p class="text-indigo-300 text-[10px] font-black uppercase tracking-widest mb-2">Net Profit</p>
-                <h2 class="text-4xl font-black"><?php echo $currency.number_format($y_profit); ?></h2>
+                <h2 class="text-4xl font-black"><?php echo $currency; ?><span x-text="display">0.00</span></h2>
                 <p class="text-[9px] text-indigo-400 font-bold mt-2 uppercase tracking-widest">Margin: <?php echo ($y_rev > 0) ? round(($y_profit/$y_rev)*100, 1) : 0; ?>%</p>
             </div>
         </div>

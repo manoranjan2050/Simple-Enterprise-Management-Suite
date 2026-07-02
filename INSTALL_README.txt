@@ -8,6 +8,12 @@ Required:
 - MySQL or MariaDB
 - A database name, database username, and database password from your hosting panel
 
+Fresh install vs. updating:
+- Never installed SEMS before? Use install.php (see Install below).
+- Already installed and just uploaded newer files? Do NOT run install.php
+  again. Run update.php instead — it only adds new columns/tables and
+  never deletes your existing data.
+
 Install:
 1. Open https://your-domain.com/install.php in the browser.
 2. Enter DB host, DB name, DB username, and DB password.
@@ -15,6 +21,7 @@ Install:
 4. Enter the first admin username, password, email, and mobile.
 5. Click Install Now.
 6. After success, open login.php and sign in with the admin account.
+7. On a phone, open login.php and use "Add to Home Screen" to install it as an app.
 
 Security after install:
 - Delete or rename install.php on the live server.
@@ -26,7 +33,9 @@ Files used by installer:
 - setup.sql: clean blank database table structure
 - config.php: generated automatically after install
 - update.php: run once after uploading a new version to an old installed system
+  (adds Telegram integration and Remote Cloud Sync columns; safe to re-run)
 - telegram.php: Telegram bot webhook endpoint
+- examples/sems_sync_receiver.php: reference server to receive Remote Cloud Sync backups
 
 Telegram:
 1. Create a bot using @BotFather.

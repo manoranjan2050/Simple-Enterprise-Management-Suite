@@ -56,6 +56,11 @@ CREATE TABLE `global_settings` (
   `telegram_enabled` tinyint(1) NOT NULL DEFAULT 0,
   `telegram_bot_token` varchar(255) DEFAULT NULL,
   `telegram_allowed_chat_ids` text DEFAULT NULL,
+  `remote_sync_enabled` tinyint(1) NOT NULL DEFAULT 0,
+  `remote_sync_url` varchar(500) DEFAULT NULL,
+  `remote_sync_api_key` varchar(255) DEFAULT NULL,
+  `remote_sync_last_status` varchar(255) DEFAULT NULL,
+  `last_remote_backup` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `global_settings_chk_1` CHECK (`id` = 1)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

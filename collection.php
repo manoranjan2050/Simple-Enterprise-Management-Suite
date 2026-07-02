@@ -52,17 +52,35 @@ $history = $conn->query("SELECT id, date, cash_sales, online_sales, note FROM tr
 <head>
     <meta charset="UTF-8">
     <title>Money Manager | Simple EMS</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="pwa-register.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>[x-cloak] { display: none !important; }</style>
 </head>
 <body class="bg-slate-50">
 
-    <nav class="bg-emerald-700 text-white p-4 shadow-xl flex justify-between items-center">
-        <h1 class="font-bold uppercase tracking-widest"><i class="fas fa-cash-register mr-2"></i> Money Collection</h1>
-        <a href="index.php" class="bg-emerald-800 px-4 py-2 rounded-xl text-xs font-bold transition-all hover:bg-emerald-900">Back to Dashboard</a>
+    <nav class="bg-emerald-700 text-white p-3 sm:p-4 shadow-xl" x-data="{ mobileOpen: false }">
+        <div class="flex justify-between items-center">
+            <h1 class="font-bold uppercase tracking-widest text-sm sm:text-base"><i class="fas fa-cash-register mr-2"></i> Money Collection</h1>
+            <div class="hidden sm:flex items-center">
+                <a href="index.php" class="bg-emerald-800 px-4 py-2 rounded-xl text-xs font-bold transition-all hover:bg-emerald-900">Back to Dashboard</a>
+            </div>
+            <button @click="mobileOpen = !mobileOpen" class="sm:hidden p-2 bg-emerald-800 rounded-xl">
+                <i class="fas" :class="mobileOpen ? 'fa-xmark' : 'fa-bars'"></i>
+            </button>
+        </div>
+        <div x-show="mobileOpen" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="sm:hidden mt-4 pb-2 flex flex-col gap-2 border-t border-emerald-600 pt-4">
+            <a href="index.php" class="p-3 bg-emerald-800 rounded-xl text-[10px] font-black uppercase text-center"><i class="fas fa-arrow-left mr-2"></i>Back to Dashboard</a>
+        </div>
     </nav>
 
-    <div class="container mx-auto px-4 py-8 max-w-6xl">
+    <div class="container mx-auto px-4 py-8 max-w-6xl" x-data="{ show: false }" x-init="setTimeout(() => show = true, 50)" x-show="show" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             <div class="bg-white p-6 rounded-3xl shadow-sm border-l-8 border-emerald-500">
@@ -81,7 +99,7 @@ $history = $conn->query("SELECT id, date, cash_sales, online_sales, note FROM tr
                     <h3 class="font-black text-slate-800 mb-6 uppercase text-sm tracking-widest">
                         <?php echo $edit_data ? 'Edit Entry' : 'Add Daily Income'; ?>
                     </h3>
-                    <form method="POST" class="space-y-4">
+                    <form method="POST" class="space-y-4" x-data="{ loading: false }" @submit="loading = true">
                         <input type="hidden" name="transaction_id" value="<?php echo $edit_data['id'] ?? ''; ?>">
                         
                         <div>
@@ -101,8 +119,9 @@ $history = $conn->query("SELECT id, date, cash_sales, online_sales, note FROM tr
                             <textarea name="note" placeholder="E.g. Lunch Peak, Sunday Special" class="w-full p-3 bg-slate-50 border rounded-xl h-20 text-sm"><?php echo $edit_data['note'] ?? ''; ?></textarea>
                         </div>
                         
-                        <button type="submit" name="save_collection" class="w-full <?php echo $edit_data ? 'bg-orange-500 hover:bg-orange-600' : 'bg-emerald-600 hover:bg-emerald-700'; ?> text-white font-black py-4 rounded-2xl shadow-lg transition-all uppercase tracking-widest text-xs">
-                            <?php echo $edit_data ? 'Update Entry' : 'Save Collection'; ?>
+                        <button type="submit" name="save_collection" :disabled="loading" class="w-full <?php echo $edit_data ? 'bg-orange-500 hover:bg-orange-600' : 'bg-emerald-600 hover:bg-emerald-700'; ?> text-white font-black py-4 rounded-2xl shadow-lg transition-all uppercase tracking-widest text-xs disabled:opacity-60">
+                            <span x-show="!loading"><?php echo $edit_data ? 'Update Entry' : 'Save Collection'; ?></span>
+                            <i x-show="loading" x-cloak class="fas fa-circle-notch fa-spin"></i>
                         </button>
 
                         <?php if($edit_data): ?>

@@ -97,19 +97,42 @@ if (isset($_POST['update_profile'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile | Security Settings</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="pwa-register.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 pb-20">
 
-    <nav class="bg-slate-900 text-white p-6 shadow-xl flex justify-between items-center sticky top-0 z-50 border-b border-indigo-500/30">
+    <nav class="bg-slate-900 text-white p-4 sm:p-6 shadow-xl flex justify-between items-center sticky top-0 z-50 border-b border-indigo-500/30" x-data="{ mobileOpen: false }">
         <div class="flex items-center gap-3">
             <i class="fas fa-shield-halved text-indigo-400 text-2xl"></i>
-            <h1 class="font-black uppercase text-sm tracking-widest italic">Account <span class="text-indigo-400">Settings</span></h1>
+            <h1 class="font-black uppercase text-xs sm:text-sm tracking-widest italic">Account <span class="text-indigo-400">Settings</span></h1>
         </div>
-        <a href="index.php" class="bg-slate-700 px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all hover:bg-slate-600">Back to Dashboard</a>
+
+        <div class="hidden sm:flex items-center">
+            <a href="index.php" class="bg-slate-700 px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all hover:bg-slate-600">Back to Dashboard</a>
+        </div>
+
+        <button @click="mobileOpen = !mobileOpen" class="sm:hidden p-2 bg-slate-800 rounded-xl">
+            <i class="fas" :class="mobileOpen ? 'fa-xmark' : 'fa-bars'"></i>
+        </button>
+
+        <div x-show="mobileOpen" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="sm:hidden absolute top-full left-0 right-0 bg-slate-900 border-t border-slate-700 p-4 flex flex-col gap-2 z-50">
+            <a href="index.php" class="p-3 bg-slate-800 rounded-xl text-[10px] font-black uppercase"><i class="fas fa-arrow-left mr-2"></i>Dashboard</a>
+            <a href="settings.php" class="p-3 bg-slate-800 rounded-xl text-[10px] font-black uppercase"><i class="fas fa-cog mr-2"></i>Settings</a>
+            <a href="logout.php" class="p-3 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl text-[10px] font-black uppercase"><i class="fas fa-right-from-bracket mr-2"></i>Logout</a>
+        </div>
     </nav>
 
-    <div class="container mx-auto px-4 py-10 max-w-5xl">
+    <div class="container mx-auto px-4 py-10 max-w-5xl" x-data="{ show: false }" x-init="setTimeout(() => show = true, 50)" x-show="show" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
         <div class="bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-slate-200">
             <div class="flex flex-col lg:flex-row">
                 
@@ -137,17 +160,23 @@ if (isset($_POST['update_profile'])) {
 
                 <div class="lg:w-2/3 p-8 md:p-12">
                     <?php if(isset($_GET['status']) && $_GET['status'] == 'success'): ?>
-                        <div class="mb-8 p-4 bg-emerald-50 text-emerald-600 rounded-2xl text-[10px] font-black uppercase border border-emerald-100 text-center tracking-widest">
+                        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
+                             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                             class="fixed top-6 right-6 z-[100] max-w-sm p-4 bg-emerald-50 text-emerald-600 rounded-2xl text-[10px] font-black uppercase border border-emerald-100 text-center tracking-widest shadow-2xl">
                             <i class="fas fa-check-circle mr-2"></i> Profile & Password Updated Successfully!
                         </div>
                     <?php endif; ?>
                     <?php if($msg): ?>
-                        <div class="mb-8 p-4 <?php echo $status == 'error' ? 'bg-rose-50 text-rose-600 border-rose-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'; ?> rounded-2xl text-[10px] font-black uppercase border text-center tracking-widest">
+                        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
+                             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 -translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                             class="fixed top-6 right-6 z-[100] max-w-sm p-4 <?php echo $status == 'error' ? 'bg-rose-50 text-rose-600 border-rose-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'; ?> rounded-2xl text-[10px] font-black uppercase border text-center tracking-widest shadow-2xl">
                             <i class="fas fa-circle-info mr-2"></i> <?php echo htmlspecialchars($msg); ?>
                         </div>
                     <?php endif; ?>
 
-                    <form method="POST" enctype="multipart/form-data" class="space-y-8">
+                    <form method="POST" enctype="multipart/form-data" class="space-y-8" x-data="{ loading: false }" @submit="loading = true">
                         <input type="hidden" name="old_photo" value="<?php echo $user['profile_pic']; ?>">
                         
                         <div>
@@ -196,8 +225,9 @@ if (isset($_POST['update_profile'])) {
 
                         <div class="pt-6 border-t border-slate-100 flex justify-end items-center gap-6">
                             <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Double check your info before saving</span>
-                            <button type="submit" name="update_profile" class="bg-slate-900 text-white px-10 py-5 rounded-3xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl hover:bg-indigo-600 hover:-translate-y-1 transition-all active:scale-95">
-                                Save Profile Settings
+                            <button type="submit" name="update_profile" :disabled="loading" class="bg-slate-900 text-white px-10 py-5 rounded-3xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl hover:bg-indigo-600 hover:-translate-y-1 transition-all active:scale-95 disabled:opacity-60">
+                                <span x-show="!loading">Save Profile Settings</span>
+                                <i x-show="loading" x-cloak class="fas fa-circle-notch fa-spin"></i>
                             </button>
                         </div>
                     </form>
